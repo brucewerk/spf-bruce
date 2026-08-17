@@ -19,12 +19,13 @@ const reportRoutes = require("../src/routes/reportRoutes");
 
 const app = express();
 
-// Configuração CORS para Vercel
+// Configuração CORS atualizada
 const corsOptions = {
   origin: [
+    "https://spf-bruce-frontend.vercel.app",
     "https://spf-bruce.vercel.app",
     "http://localhost:5173",
-    "https://spf-bruce-git-main-brucewerks-projects.vercel.app",
+    "http://localhost:3000",
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
