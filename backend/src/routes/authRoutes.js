@@ -1,0 +1,35 @@
+const express = require("express");
+const router = express.Router();
+const { body } = require("express-validator");
+const auth = require("../middleware/auth");
+const {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  deleteAccount,
+} = require("../controllers/authController");
+
+// Rotas públicas
+router.post(
+  "/register",
+  [
+    body("email").isEmail().normalizeEmail(),
+    body("password").isLength({ min: 6 }),
+    body("name").notEmpty().trim(),
+  ],
+  register,
+);
+
+router.post(
+  "/login",
+  [body("email").isEmail().normalizeEmail(), body("password").notEmpty()],
+  login,
+);
+
+// Rotas protegidas
+router.get("/profile", auth, getProfile);
+router.put("/profile", auth, updateProfile);
+router.delete("/profile", auth, deleteAccount);
+
+module.exports = router;

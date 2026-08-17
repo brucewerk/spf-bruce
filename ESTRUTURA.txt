@@ -1,0 +1,110 @@
+spf-bruce/
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── database.js
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   ├── exercicioController.js
+│   │   │   ├── padraoController.js
+│   │   │   ├── contaController.js
+│   │   │   ├── investimentoController.js
+│   │   │   ├── categoriaController.js
+│   │   │   ├── tipoInvestimentoController.js
+│   │   │   ├── produtoInvestimentoController.js
+│   │   │   ├── ativoController.js
+│   │   │   ├── passivoController.js
+│   │   │   └── reportController.js
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   ├── Exercicio.js
+│   │   │   ├── AtivoPadrao.js
+│   │   │   ├── PassivoPadrao.js
+│   │   │   ├── InvestimentoPadrao.js
+│   │   │   ├── Conta.js
+│   │   │   ├── Investimento.js
+│   │   │   ├── CategoriaAtivo.js
+│   │   │   ├── CategoriaPassivo.js
+│   │   │   ├── TipoInvestimento.js
+│   │   │   └── ProdutoInvestimento.js
+│   │   ├── routes/
+│   │   │   ├── authRoutes.js
+│   │   │   ├── exercicioRoutes.js
+│   │   │   ├── padraoRoutes.js
+│   │   │   ├── contaRoutes.js
+│   │   │   ├── investimentoRoutes.js
+│   │   │   ├── categoriaRoutes.js
+│   │   │   ├── tipoInvestimentoRoutes.js
+│   │   │   ├── produtoInvestimentoRoutes.js
+│   │   │   ├── ativoRoutes.js
+│   │   │   ├── passivoRoutes.js
+│   │   │   └── reportRoutes.js
+│   │   ├── middleware/
+│   │   │   └── auth.js
+│   │   └── server.js
+│   ├── .env
+│   ├── package.json
+│   └── vercel.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   │   ├── BottomNav.jsx
+│   │   │   │   ├── PrivateRoute.jsx
+│   │   │   │   ├── SettingsMenu.jsx
+│   │   │   │   └── ThemeToggle.jsx
+│   │   │   ├── auth/
+│   │   │   │   ├── Login.jsx
+│   │   │   │   ├── Register.jsx
+│   │   │   │   └── Profile.jsx
+│   │   │   ├── dashboard/
+│   │   │   │   └── Dashboard.jsx
+│   │   │   ├── exercicios/
+│   │   │   │   ├── ExercicioList.jsx
+│   │   │   │   ├── ExercicioForm.jsx
+│   │   │   │   └── NovoExercicioModal.jsx
+│   │   │   ├── padroes/
+│   │   │   │   ├── AtivosPadrao.jsx
+│   │   │   │   ├── PassivosPadrao.jsx
+│   │   │   │   └── InvestimentosPadrao.jsx
+│   │   │   ├── categorias/
+│   │   │   │   ├── CategoriasAtivo.jsx
+│   │   │   │   ├── CategoriasPassivo.jsx
+│   │   │   │   ├── TiposInvestimento.jsx
+│   │   │   │   └── ProdutosInvestimento.jsx
+│   │   │   ├── contas/
+│   │   │   │   └── Contas.jsx
+│   │   │   ├── ativos/
+│   │   │   │   └── Ativos.jsx
+│   │   │   ├── passivos/
+│   │   │   │   └── Passivos.jsx
+│   │   │   ├── investimentos/
+│   │   │   │   └── Investimentos.jsx
+│   │   │   ├── evolucao/
+│   │   │   │   └── EvolucaoPatrimonial.jsx
+│   │   │   ├── exportar/
+│   │   │   │   └── ExportarRelatorios.jsx
+│   │   │   ├── notificacoes/
+│   │   │   │   └── Notificacoes.jsx
+│   │   │   └── analises/
+│   │   │       └── AnalisesAvancadas.jsx
+│   │   ├── context/
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── ThemeContext.jsx
+│   │   ├── hooks/
+│   │   │   └── useFetch.js
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── utils/
+│   │   │   └── format.js
+│   │   ├── styles/
+│   │   │   └── index.css
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── .env
+│   ├── package.json
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   └── vite.config.js
+├── .gitignore
+└── README.md

@@ -1,0 +1,506 @@
+import React, { useState, useEffect } from "react";
+import { useFetch } from "../../hooks/useFetch";
+import { formatarMoeda } from "../../utils/format";
+import { RefreshCw } from "lucide-react";
+import {
+  PieChart as RePieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+const Investimentos = () => {
+  const { data: exercicios, loading: loadingExercicios } =
+    useFetch("/exercicios");
+  const { data: tiposInvestimento } = useFetch("/tipos-investimento");
+  const { data: produtosInvestimento } = useFetch("/produtos-investimento");
+  const [investimentos, setInvestimentos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [totalMaisAtual, setTotalMaisAtual] = useState(0);
+  const [periodo, setPeriodo] = useState("");
+
+  const [hiddenPieSlices, setHiddenPieSlices] = useState({});
+  const [hiddenBarItems, setHiddenBarItems] = useState({});
+
+  const meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+
+  useEffect(() => {
+    if (exercicios && exercicios.length > 0) {
+      const ultimoExercicio = exercicios.reduce((max, e) => {
+        return e.year > max.year || (e.year === max.year && e.month > max.month)
+          ? e
+          : max;
+      }, exercicios[0]);
+
+      if (ultimoExercicio) {
+        setPeriodo(
+          `${meses[ultimoExercicio.month - 1]}/${ultimoExercicio.year}`,
+        );
+
+        if (ultimoExercicio.investimentos) {
+          setInvestimentos(ultimoExercicio.investimentos);
+          const total = ultimoExercicio.investimentos.reduce(
+            (sum, i) => sum + (i.saldoBruto || 0),
+            0,
+          );
+          setTotalMaisAtual(total);
+        } else {
+          setInvestimentos([]);
+          setTotalMaisAtual(0);
+        }
+      } else {
+        setInvestimentos([]);
+        setTotalMaisAtual(0);
+        setPeriodo("");
+      }
+      setLoading(false);
+
+      setHiddenPieSlices({});
+      setHiddenBarItems({});
+    } else if (exercicios && exercicios.length === 0) {
+      setInvestimentos([]);
+      setTotalMaisAtual(0);
+      setPeriodo("");
+      setLoading(false);
+    }
+  }, [exercicios]);
+
+  const COLORS = [
+    "#8b5cf6",
+    "#a78bfa",
+    "#c4b5fd",
+    "#7c3aed",
+    "#6d28d9",
+    "#5b21b6",
+    "#4c1d95",
+    "#3b0764",
+  ];
+
+  const investimentosPorTipo = investimentos?.reduce((acc, inv) => {
+    const tipo = inv.tipo || "Outros";
+    if (!acc[tipo]) acc[tipo] = { total: 0, itens: [], rendimentos: [] };
+    acc[tipo].total += inv.saldoBruto || 0;
+    acc[tipo].itens.push(inv);
+    acc[tipo].rendimentos.push((inv.saldoBruto || 0) - (inv.valorCompra || 0));
+    return acc;
+  }, {});
+
+  const dadosGrafico = Object.entries(investimentosPorTipo || {}).map(
+    ([nome, dados]) => ({
+      name: nome,
+      value: dados.total,
+      quantidade: dados.itens.length,
+      rendimentoTotal: dados.rendimentos.reduce((a, b) => a + b, 0),
+    }),
+  );
+
+  const totalCompra =
+    investimentos?.reduce((sum, i) => sum + (i.valorCompra || 0), 0) || 0;
+  const totalSaldo =
+    investimentos?.reduce((sum, i) => sum + (i.saldoBruto || 0), 0) || 0;
+  const totalRendimento = totalSaldo - totalCompra;
+  const totalIR =
+    investimentos?.reduce((sum, i) => sum + (i.irIof || 0), 0) || 0;
+  const percentualRendimento =
+    totalCompra > 0 ? (totalRendimento / totalCompra) * 100 : 0;
+
+  const topInvestimentos = [...(investimentos || [])]
+    .sort((a, b) => (b.saldoBruto || 0) - (a.saldoBruto || 0))
+    .slice(0, 5)
+    .map((i, index) => ({
+      id: index,
+      name: i.nome.length > 15 ? i.nome.substring(0, 15) + "..." : i.nome,
+      value: i.saldoBruto || 0,
+      tipo: i.tipo || "Outros",
+      fullName: i.nome,
+    }));
+
+  const togglePieSlice = (index) => {
+    setHiddenPieSlices((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const toggleBarItem = (index) => {
+    setHiddenBarItems((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const filteredPieData = dadosGrafico.filter(
+    (_, index) => !hiddenPieSlices[index],
+  );
+  const filteredBarData = topInvestimentos.filter(
+    (_, index) => !hiddenBarItems[index],
+  );
+
+  const resetAllLegends = () => {
+    setHiddenPieSlices({});
+    setHiddenBarItems({});
+  };
+
+  const handlePieClick = (data, index) => {
+    const originalIndex = dadosGrafico.findIndex((d) => d.name === data.name);
+    if (originalIndex !== -1) {
+      togglePieSlice(originalIndex);
+    }
+  };
+
+  const handlePieLegendClick = (e) => {
+    const index = dadosGrafico.findIndex((d) => d.name === e.value);
+    if (index !== -1) {
+      togglePieSlice(index);
+    }
+  };
+
+  const handleBarCellClick = (entry) => {
+    const index = topInvestimentos.findIndex((d) => d.name === entry.name);
+    if (index !== -1) {
+      toggleBarItem(index);
+    }
+  };
+
+  const handleBarLegendClick = (e) => {
+    const index = topInvestimentos.findIndex((d) => d.name === e.value);
+    if (index !== -1) {
+      toggleBarItem(index);
+    }
+  };
+
+  if (loading || loadingExercicios) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto p-3 sm:p-4 pb-24">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold">
+          📈 Carteira de Investimentos{" "}
+          {periodo && (
+            <span className="text-base sm:text-lg font-normal text-gray-500">
+              - {periodo}
+            </span>
+          )}
+        </h1>
+        <button
+          onClick={() => (window.location.href = "/investimentos-padrao")}
+          className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+        >
+          <span>⚙️</span>{" "}
+          <span className="hidden sm:inline">Gerenciar Padrões</span>
+        </button>
+      </div>
+
+      {investimentos.length === 0 ? (
+        <div className="card text-center py-12">
+          <p className="text-gray-500 dark:text-gray-500">
+            Nenhum investimento cadastrado
+          </p>
+          <p className="text-sm text-gray-400 dark:text-gray-600 mt-2">
+            Cadastre investimentos padrão em Configurações → Investimentos
+            Padrão e crie um exercício
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="card bg-primary-50 dark:bg-primary-900/20 p-2 sm:p-3">
+              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+                Total Investido
+              </p>
+              <p className="text-sm sm:text-xl font-bold text-primary-600 dark:text-primary-400">
+                {formatarMoeda(totalCompra)}
+              </p>
+            </div>
+            <div className="card bg-green-50 dark:bg-green-900/20 p-2 sm:p-3">
+              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+                Saldo Total
+              </p>
+              <p className="text-sm sm:text-xl font-bold text-green-600 dark:text-green-400">
+                {formatarMoeda(totalSaldo)}
+              </p>
+            </div>
+            <div className="card bg-blue-50 dark:bg-blue-900/20 p-2 sm:p-3">
+              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+                Rendimento Total
+              </p>
+              <p
+                className={`text-sm sm:text-xl font-bold ${totalRendimento >= 0 ? "text-green-600" : "text-red-600"}`}
+              >
+                {formatarMoeda(totalRendimento)}
+              </p>
+            </div>
+            <div className="card bg-purple-50 dark:bg-purple-900/20 p-2 sm:p-3">
+              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+                💰 Total Atual
+              </p>
+              <p className="text-sm sm:text-xl font-bold text-purple-600 dark:text-purple-400">
+                {formatarMoeda(totalMaisAtual)}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="card p-2 sm:p-3">
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                Quantidade
+              </p>
+              <p className="text-sm sm:text-xl font-bold">
+                {investimentos?.length || 0}
+              </p>
+            </div>
+            <div className="card p-2 sm:p-3">
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                % Rendimento
+              </p>
+              <p
+                className={`text-sm sm:text-xl font-bold ${percentualRendimento >= 0 ? "text-green-600" : "text-red-600"}`}
+              >
+                {percentualRendimento.toFixed(2)}%
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {/* Gráfico 1: Distribuição por Tipo - PIE */}
+            <div className="card p-3 sm:p-4">
+              <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-4">
+                <h2 className="text-sm sm:text-lg font-semibold">
+                  Distribuição por Tipo
+                </h2>
+                <button
+                  onClick={resetAllLegends}
+                  className="p-1.5 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+                  title="Resetar legendas"
+                >
+                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Resetar</span>
+                </button>
+              </div>
+              {dadosGrafico.length > 0 ? (
+                <div className="h-56 sm:h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RePieChart>
+                      <Pie
+                        data={filteredPieData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={true}
+                        label={({ name, percent }) =>
+                          `${name} ${(percent * 100).toFixed(0)}%`
+                        }
+                        outerRadius={70}
+                        innerRadius={25}
+                        fill="#8884d8"
+                        dataKey="value"
+                        fontSize={10}
+                        onClick={handlePieClick}
+                      >
+                        {filteredPieData.map((entry, index) => {
+                          const originalIndex = dadosGrafico.findIndex(
+                            (d) => d.name === entry.name,
+                          );
+                          return (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[originalIndex % COLORS.length]}
+                              style={{ cursor: "pointer" }}
+                            />
+                          );
+                        })}
+                      </Pie>
+                      <Tooltip formatter={(value) => formatarMoeda(value)} />
+                      <Legend
+                        wrapperStyle={{ fontSize: "10px", cursor: "pointer" }}
+                        onClick={handlePieLegendClick}
+                      />
+                    </RePieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-56 sm:h-64 flex items-center justify-center text-gray-400">
+                  Nenhum dado disponível
+                </div>
+              )}
+              <p className="text-[10px] sm:text-xs text-gray-400 text-center mt-2">
+                📊 Clique nas fatias ou legendas
+              </p>
+            </div>
+
+            {/* Gráfico 2: Top 5 Investimentos - BARRA HORIZONTAL */}
+            <div className="card p-3 sm:p-4">
+              <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-4">
+                <h2 className="text-sm sm:text-lg font-semibold">
+                  Top 5 Investimentos
+                </h2>
+                <button
+                  onClick={resetAllLegends}
+                  className="p-1.5 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+                  title="Resetar legendas"
+                >
+                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Resetar</span>
+                </button>
+              </div>
+              {topInvestimentos.length > 0 ? (
+                <div className="h-56 sm:h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={filteredBarData} layout="vertical">
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="#374151"
+                        opacity={0.1}
+                      />
+                      <XAxis type="number" stroke="#6b7280" fontSize={9} />
+                      <YAxis
+                        dataKey="name"
+                        type="category"
+                        stroke="#6b7280"
+                        fontSize={8}
+                        width={60}
+                      />
+                      <Tooltip formatter={(value) => formatarMoeda(value)} />
+                      <Legend
+                        wrapperStyle={{ fontSize: "10px", cursor: "pointer" }}
+                        onClick={handleBarLegendClick}
+                      />
+                      <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]}>
+                        {filteredBarData.map((entry, index) => {
+                          const originalIndex = topInvestimentos.findIndex(
+                            (d) => d.name === entry.name,
+                          );
+                          return (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[originalIndex % COLORS.length]}
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleBarCellClick(entry)}
+                            />
+                          );
+                        })}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-56 sm:h-64 flex items-center justify-center text-gray-400">
+                  Nenhum dado disponível
+                </div>
+              )}
+              <p className="text-[10px] sm:text-xs text-gray-400 text-center mt-2">
+                📊 Clique nas barras ou legendas
+              </p>
+            </div>
+          </div>
+
+          <div className="card overflow-x-auto p-3 sm:p-4">
+            <h2 className="text-sm sm:text-lg font-semibold mb-4">
+              Resumo por Tipo
+            </h2>
+            <table className="w-full text-xs sm:text-sm min-w-[400px]">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="text-left py-2 px-2 sm:px-3 font-medium">
+                    Tipo
+                  </th>
+                  <th className="text-right py-2 px-2 sm:px-3 font-medium">
+                    Quantidade
+                  </th>
+                  <th className="text-right py-2 px-2 sm:px-3 font-medium">
+                    Total
+                  </th>
+                  <th className="text-right py-2 px-2 sm:px-3 font-medium">
+                    Rendimento
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {dadosGrafico.map((item, index) => {
+                  const tipo = tiposInvestimento?.find(
+                    (t) => t.nome === item.name,
+                  );
+                  return (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-100 dark:border-gray-800"
+                    >
+                      <td className="py-2 px-2 sm:px-3 flex items-center gap-1 sm:gap-2">
+                        {tipo && (
+                          <>
+                            <div
+                              className="w-2 h-2 sm:w-3 sm:h-3 rounded-full"
+                              style={{ backgroundColor: tipo.cor }}
+                            />
+                            <span className="text-base sm:text-xl">
+                              {tipo.icone}
+                            </span>
+                          </>
+                        )}
+                        <span className="text-xs sm:text-sm">{item.name}</span>
+                      </td>
+                      <td className="text-right py-2 px-2 sm:px-3">
+                        {item.quantidade}
+                      </td>
+                      <td className="text-right py-2 px-2 sm:px-3 font-medium text-primary-600 dark:text-primary-400 text-xs sm:text-sm">
+                        {formatarMoeda(item.value)}
+                      </td>
+                      <td
+                        className={`text-right py-2 px-2 sm:px-3 text-xs sm:text-sm ${item.rendimentoTotal >= 0 ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {formatarMoeda(item.rendimentoTotal)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-bold">
+                  <td className="py-2 px-2 sm:px-3">TOTAL</td>
+                  <td className="text-right py-2 px-2 sm:px-3">
+                    {investimentos?.length || 0}
+                  </td>
+                  <td className="text-right py-2 px-2 sm:px-3 text-primary-600 dark:text-primary-400 text-xs sm:text-sm">
+                    {formatarMoeda(totalSaldo)}
+                  </td>
+                  <td
+                    className={`text-right py-2 px-2 sm:px-3 text-xs sm:text-sm ${totalRendimento >= 0 ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {formatarMoeda(totalRendimento)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Investimentos;
