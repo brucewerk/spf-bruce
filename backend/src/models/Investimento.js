@@ -61,4 +61,6 @@ const InvestimentoSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+InvestimentoSchema.index({ userId: 1 });
+
 module.exports = mongoose.model("Investimento", InvestimentoSchema);

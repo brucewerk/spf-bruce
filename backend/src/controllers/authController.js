@@ -1,4 +1,16 @@
 const User = require("../models/User");
+const Ativo = require("../models/Ativo");
+const AtivoPadrao = require("../models/AtivoPadrao");
+const Passivo = require("../models/Passivo");
+const PassivoPadrao = require("../models/PassivoPadrao");
+const Investimento = require("../models/Investimento");
+const InvestimentoPadrao = require("../models/InvestimentoPadrao");
+const Conta = require("../models/Conta");
+const Exercicio = require("../models/Exercicio");
+const CategoriaAtivo = require("../models/CategoriaAtivo");
+const CategoriaPassivo = require("../models/CategoriaPassivo");
+const TipoInvestimento = require("../models/TipoInvestimento");
+const ProdutoInvestimento = require("../models/ProdutoInvestimento");
 const jwt = require("jsonwebtoken");
 
 // Gerar JWT
@@ -143,11 +155,24 @@ const deleteAccount = async (req, res) => {
       return res.status(401).json({ error: "Senha incorreta." });
     }
 
-    // Deletar todos os dados relacionados
+    // Deletar todos os dados relacionados ao usuário antes de remover a conta
+    const userId = user._id;
     await Promise.all([
-      user.deleteOne(),
-      // Os outros modelos serão deletados em cascata via middleware ou manual
+      Ativo.deleteMany({ userId }),
+      AtivoPadrao.deleteMany({ userId }),
+      Passivo.deleteMany({ userId }),
+      PassivoPadrao.deleteMany({ userId }),
+      Investimento.deleteMany({ userId }),
+      InvestimentoPadrao.deleteMany({ userId }),
+      Conta.deleteMany({ userId }),
+      Exercicio.deleteMany({ userId }),
+      CategoriaAtivo.deleteMany({ userId }),
+      CategoriaPassivo.deleteMany({ userId }),
+      TipoInvestimento.deleteMany({ userId }),
+      ProdutoInvestimento.deleteMany({ userId }),
     ]);
+
+    await user.deleteOne();
 
     res.json({ message: "Conta deletada com sucesso." });
   } catch (error) {

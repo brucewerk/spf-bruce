@@ -24,33 +24,9 @@ const formatarMoeda = (valor) => {
 
 const buscarInvestimentosPorUsuario = async (userId) => {
   try {
-    // Buscar usando o modelo diretamente com filtro explícito
-    const investimentos = await Investimento.find({
-      userId: userId,
-    }).lean();
-
-    console.log(
-      `🔍 Busca direta por userId: ${userId} -> ${investimentos.length} investimentos`,
-    );
-
-    // Filtrar novamente em memória para garantir
-    const filtrados = investimentos.filter((i) => {
-      const idStr = i.userId?.toString?.() || "";
-      const userIdStr = userId?.toString?.() || "";
-      return idStr === userIdStr;
-    });
-
-    console.log(`🔍 Após filtro em memória: ${filtrados.length} investimentos`);
-
-    if (filtrados.length > 0) {
-      filtrados.forEach((i) => {
-        console.log(`  - ${i.nome} (userId: ${i.userId})`);
-      });
-    }
-
-    return filtrados;
+    return await Investimento.find({ userId }).lean();
   } catch (error) {
-    console.error("❌ Erro ao buscar investimentos:", error);
+    console.error("Erro ao buscar investimentos:", error);
     return [];
   }
 };
@@ -64,9 +40,6 @@ const gerarRelatorioPDF = async (req, res) => {
     const userId = req.userId;
     const { year } = req.query;
 
-    console.log(`📄 Gerando relatório PDF para ${year} - Usuário ${userId}`);
-
-    // Buscar dados explicitamente
     const exercicios = await Exercicio.find({
       userId: userId,
       year: parseInt(year),
@@ -76,12 +49,7 @@ const gerarRelatorioPDF = async (req, res) => {
       userId: userId,
     });
 
-    // Buscar investimentos com função específica
     const investimentos = await buscarInvestimentosPorUsuario(userId);
-
-    console.log(
-      `📊 Dados encontrados: ${exercicios.length} exercícios, ${contas.length} contas, ${investimentos.length} investimentos`,
-    );
 
     // Calcular totais
     const totalAtivos = exercicios.reduce(
@@ -305,8 +273,6 @@ const gerarRelatorioExcel = async (req, res) => {
     const userId = req.userId;
     const { year } = req.query;
 
-    console.log(`📊 Gerando relatorio Excel para ${year} - Usuario ${userId}`);
-
     const exercicios = await Exercicio.find({
       userId: userId,
       year: parseInt(year),
@@ -316,12 +282,7 @@ const gerarRelatorioExcel = async (req, res) => {
       userId: userId,
     });
 
-    // Buscar investimentos com função específica
     const investimentos = await buscarInvestimentosPorUsuario(userId);
-
-    console.log(
-      `📊 Encontrados: ${exercicios.length} exercicios, ${contas.length} contas, ${investimentos.length} investimentos`,
-    );
 
     // Calcular totais
     const totalAtivos = exercicios.reduce(

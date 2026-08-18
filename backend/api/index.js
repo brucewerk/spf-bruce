@@ -1,8 +1,10 @@
 // api/index.js - Entry point for Vercel serverless deployment
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
+const helmet = require("helmet");
 const mongoose = require("mongoose");
+const { corsMiddleware } = require("../src/config/cors");
+const { authLimiter, apiLimiter } = require("../src/middleware/rateLimit");
 
 // Importar rotas
 const authRoutes = require("../src/routes/authRoutes");
@@ -19,45 +21,13 @@ const reportRoutes = require("../src/routes/reportRoutes");
 
 const app = express();
 
-// ============================================
-// CORS - PRODUÇÃO (VERCEL)
-// ============================================
-const allowedOrigins = [
-  "https://spf-bruce-frontend.vercel.app",
-  "https://spf-bruce.vercel.app",
-  "https://spf-bruce-frontend-148ibswy5-kling-klang.vercel.app",
-  "https://spf-bruce-frontend-mhv6qrsdz-kling-klang.vercel.app",
-  "https://spf-bruce-frontend-fdglxow4k-kling-klang.vercel.app",
-  "http://localhost:5173",
-  "http://localhost:3000",
-];
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With, Accept",
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
+app.use(helmet());
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ============================================
-// MongoDB Connection
+// MongoDB Connection (reaproveita conexão entre invocações serverless)
 // ============================================
 const connectDB = async () => {
   try {
@@ -78,17 +48,17 @@ app.use(async (req, res, next) => {
 // ============================================
 // ROTAS
 // ============================================
-app.use("/api/auth", authRoutes);
-app.use("/api/exercicios", exercicioRoutes);
-app.use("/api/padroes", padraoRoutes);
-app.use("/api/contas", contaRoutes);
-app.use("/api/investimentos", investimentoRoutes);
-app.use("/api/categorias", categoriaRoutes);
-app.use("/api/tipos-investimento", tipoInvestimentoRoutes);
-app.use("/api/produtos-investimento", produtoInvestimentoRoutes);
-app.use("/api/ativos", ativoRoutes);
-app.use("/api/passivos", passivoRoutes);
-app.use("/api/reports", reportRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/exercicios", apiLimiter, exercicioRoutes);
+app.use("/api/padroes", apiLimiter, padraoRoutes);
+app.use("/api/contas", apiLimiter, contaRoutes);
+app.use("/api/investimentos", apiLimiter, investimentoRoutes);
+app.use("/api/categorias", apiLimiter, categoriaRoutes);
+app.use("/api/tipos-investimento", apiLimiter, tipoInvestimentoRoutes);
+app.use("/api/produtos-investimento", apiLimiter, produtoInvestimentoRoutes);
+app.use("/api/ativos", apiLimiter, ativoRoutes);
+app.use("/api/passivos", apiLimiter, passivoRoutes);
+app.use("/api/reports", apiLimiter, reportRoutes);
 
 // ============================================
 // HEALTH CHECK
@@ -114,11 +84,11 @@ app.get("/", (req, res) => {
 });
 
 // ============================================
-// Error Handler
+// Error Handler — não vaza err.message (podia expor detalhes internos/driver)
 // ============================================
 app.use((err, req, res, next) => {
   console.error("❌ Erro:", err.stack);
-  res.status(500).json({ error: err.message });
+  res.status(500).json({ error: "Erro interno do servidor" });
 });
 
 module.exports = app;

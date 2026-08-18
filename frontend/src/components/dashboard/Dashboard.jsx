@@ -31,6 +31,7 @@ const Dashboard = () => {
   const { data: exercicios, refetch } = useFetch("/exercicios");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [yearData, setYearData] = useState([]);
+  const [lastMonthAtivos, setLastMonthAtivos] = useState([]);
   const [summary, setSummary] = useState({
     totalAtivos: 0,
     totalPassivosAcumulado: 0,
@@ -97,6 +98,16 @@ const Dashboard = () => {
 
       setYearData(dadosComVariacao);
 
+      // Guarda o array bruto de ativos do último mês (por categoria) para o
+      // gráfico de composição — antes ele nunca populava porque tentava ler
+      // esse array a partir de `yearData`, onde `ativos` já era só o total.
+      const ultimoMesFiltrado = filtered[filtered.length - 1];
+      setLastMonthAtivos(
+        ultimoMesFiltrado && Array.isArray(ultimoMesFiltrado.ativos)
+          ? ultimoMesFiltrado.ativos
+          : [],
+      );
+
       // Calcular resumo
       const lastMonth = dadosComVariacao[dadosComVariacao.length - 1];
       const firstMonth = dadosComVariacao[0];
@@ -135,6 +146,7 @@ const Dashboard = () => {
     } else {
       // Se não houver exercícios, resetar dados
       setYearData([]);
+      setLastMonthAtivos([]);
       setSummary({
         totalAtivos: 0,
         totalPassivosAcumulado: 0,
@@ -158,26 +170,18 @@ const Dashboard = () => {
     "#f97316",
   ];
 
-  // Composição do último mês (ativos por tipo) - COM VERIFICAÇÃO DE SEGURANÇA
+  // Composição do último mês (ativos por tipo)
   let pieData = [];
-  if (yearData.length > 0) {
-    const lastMonthData = yearData[yearData.length - 1];
-    // Verificar se lastMonthData existe e se ativos é um array
-    if (
-      lastMonthData &&
-      lastMonthData.ativos &&
-      Array.isArray(lastMonthData.ativos)
-    ) {
-      const ativosPorTipo = lastMonthData.ativos.reduce((acc, item) => {
-        const tipo = item.tipo || "outro";
-        acc[tipo] = (acc[tipo] || 0) + (item.valor || 0);
-        return acc;
-      }, {});
-      pieData = Object.entries(ativosPorTipo).map(([name, value]) => ({
-        name,
-        value,
-      }));
-    }
+  if (lastMonthAtivos.length > 0) {
+    const ativosPorTipo = lastMonthAtivos.reduce((acc, item) => {
+      const tipo = item.tipo || "outro";
+      acc[tipo] = (acc[tipo] || 0) + (item.valor || 0);
+      return acc;
+    }, {});
+    pieData = Object.entries(ativosPorTipo).map(([name, value]) => ({
+      name,
+      value,
+    }));
   }
 
   // Inicializar estado do pie

@@ -41,4 +41,6 @@ const ContaSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+ContaSchema.index({ userId: 1 });
+
 module.exports = mongoose.model("Conta", ContaSchema);

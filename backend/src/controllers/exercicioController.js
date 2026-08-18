@@ -63,11 +63,6 @@ const criarExercicio = async (req, res) => {
       ativo: true,
     }).sort("ordem");
 
-    console.log(`📊 Criando exercício ${month}/${year} com:`);
-    console.log(`   - ${ativosPadrao.length} ativos padrão`);
-    console.log(`   - ${passivosPadrao.length} passivos padrão`);
-    console.log(`   - ${investimentosPadrao.length} investimentos padrão`);
-
     // Criar exercício com os dados dos padrões
     const exercicio = new Exercicio({
       userId,

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
 const auth = require("../middleware/auth");
+const validate = require("../middleware/validate");
 const {
   register,
   login,
@@ -18,12 +19,14 @@ router.post(
     body("password").isLength({ min: 6 }),
     body("name").notEmpty().trim(),
   ],
+  validate,
   register,
 );
 
 router.post(
   "/login",
   [body("email").isEmail().normalizeEmail(), body("password").notEmpty()],
+  validate,
   login,
 );
 

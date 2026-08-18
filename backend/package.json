@@ -17,7 +17,9 @@
     "jsonwebtoken": "^9.0.2",
     "express-validator": "^7.0.1",
     "exceljs": "^4.4.0",
-    "pdfmake": "^0.2.7"
+    "pdfmake": "^0.2.7",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

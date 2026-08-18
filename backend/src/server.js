@@ -1,7 +1,9 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
+const helmet = require("helmet");
 const connectDB = require("./config/database");
+const { corsMiddleware } = require("./config/cors");
+const { authLimiter, apiLimiter } = require("./middleware/rateLimit");
 
 // Importar rotas
 const authRoutes = require("./routes/authRoutes");
@@ -21,52 +23,23 @@ const app = express();
 // Conectar ao MongoDB
 connectDB();
 
-// ============================================
-// CORS - LOCAL (PERMITIR LOCALHOST)
-// ============================================
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://spf-bruce-frontend.vercel.app",
-  "https://spf-bruce.vercel.app",
-];
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With, Accept",
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
+app.use(helmet());
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Rotas
-app.use("/api/auth", authRoutes);
-app.use("/api/exercicios", exercicioRoutes);
-app.use("/api/padroes", padraoRoutes);
-app.use("/api/contas", contaRoutes);
-app.use("/api/investimentos", investimentoRoutes);
-app.use("/api/categorias", categoriaRoutes);
-app.use("/api/tipos-investimento", tipoInvestimentoRoutes);
-app.use("/api/produtos-investimento", produtoInvestimentoRoutes);
-app.use("/api/ativos", ativoRoutes);
-app.use("/api/passivos", passivoRoutes);
-app.use("/api/reports", reportRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/exercicios", apiLimiter, exercicioRoutes);
+app.use("/api/padroes", apiLimiter, padraoRoutes);
+app.use("/api/contas", apiLimiter, contaRoutes);
+app.use("/api/investimentos", apiLimiter, investimentoRoutes);
+app.use("/api/categorias", apiLimiter, categoriaRoutes);
+app.use("/api/tipos-investimento", apiLimiter, tipoInvestimentoRoutes);
+app.use("/api/produtos-investimento", apiLimiter, produtoInvestimentoRoutes);
+app.use("/api/ativos", apiLimiter, ativoRoutes);
+app.use("/api/passivos", apiLimiter, passivoRoutes);
+app.use("/api/reports", apiLimiter, reportRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -89,7 +62,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Middleware de erro
+// Middleware de erro — nunca vaza detalhes internos (stack, msg de driver) ao cliente
 app.use((err, req, res, next) => {
   console.error("❌ Erro:", err.stack);
   res.status(500).json({ error: "Erro interno do servidor" });
