@@ -168,7 +168,7 @@ const EvolucaoPatrimonial = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-3 sm:p-4 pb-24">
+    <div className="max-w-6xl w-full mx-auto p-2 sm:p-4">
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
         Evolução Patrimonial Acumulada
       </h1>
@@ -277,38 +277,36 @@ const EvolucaoPatrimonial = () => {
                 </p>
               </div>
 
-              {/* 🔥 SUBSTITUIÇÃO DA TABELA POR CARDS 🔥 */}
               <div className="card p-3 sm:p-4">
                 <h2 className="text-sm sm:text-lg font-semibold mb-3 sm:mb-4">
                   Resumo Acumulado - {selectedYear}
                 </h2>
 
-                {/* Grid de Cards (2 colunas no celular, 4 no desktop) */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3">
                   {dadosFiltradosTabela.map((data, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 dark:bg-gray-700/50 p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm flex flex-col"
+                      className="w-full bg-gray-50 dark:bg-gray-700/50 p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm flex flex-col"
                     >
                       <div className="text-[10px] sm:text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1 border-b border-gray-300 dark:border-gray-600 pb-1">
                         {data.periodo}
                       </div>
                       <div className="flex justify-between items-center text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
                         <span>Ativos:</span>
-                        <span className="text-primary-600 font-medium">
+                        <span className="text-primary-600 font-medium truncate">
                           {formatarMoeda(data.ativos)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
                         <span>Passivos:</span>
-                        <span className="text-red-600 font-medium">
+                        <span className="text-red-600 font-medium truncate">
                           {formatarMoeda(data.passivos)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 pt-1 border-t border-gray-200 dark:border-gray-600">
                         <span className="font-medium">Variação:</span>
                         <span
-                          className={`font-bold ${data.variacao >= 0 ? "text-green-600" : "text-red-600"}`}
+                          className={`font-bold truncate ${data.variacao >= 0 ? "text-green-600" : "text-red-600"}`}
                         >
                           {data.variacao >= 0 ? "+" : ""}
                           {formatarMoeda(data.variacao)}
@@ -318,23 +316,22 @@ const EvolucaoPatrimonial = () => {
                   ))}
                 </div>
 
-                {/* Card de Total */}
-                <div className="mt-3 p-2 sm:p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 flex flex-wrap justify-between items-center gap-2">
+                <div className="mt-3 p-2 sm:p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 flex flex-wrap justify-between items-center gap-2 w-full">
                   <span className="font-bold text-gray-700 dark:text-gray-300">
                     TOTAL
                   </span>
                   {(() => {
                     const totais = getTotaisAno(dadosFiltradosTabela);
                     return (
-                      <div className="flex flex-wrap gap-3 sm:gap-6 text-[10px] sm:text-sm">
-                        <span className="text-primary-600 font-medium">
+                      <div className="flex flex-wrap justify-end gap-2 sm:gap-4 text-[10px] sm:text-sm text-right">
+                        <span className="text-primary-600 font-medium whitespace-nowrap">
                           Ativos: {formatarMoeda(totais.ativos)}
                         </span>
-                        <span className="text-red-600 font-medium">
+                        <span className="text-red-600 font-medium whitespace-nowrap">
                           Passivos: {formatarMoeda(totais.passivos)}
                         </span>
                         <span
-                          className={`font-bold ${totais.variacao >= 0 ? "text-green-600" : "text-red-600"}`}
+                          className={`font-bold whitespace-nowrap ${totais.variacao >= 0 ? "text-green-600" : "text-red-600"}`}
                         >
                           Variação: {totais.variacao >= 0 ? "+" : ""}
                           {formatarMoeda(totais.variacao)}

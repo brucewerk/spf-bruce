@@ -24,14 +24,14 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50 shadow-lg">
-      <div className="flex justify-around items-center h-16 max-w-xl mx-auto overflow-x-auto">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50 shadow-lg h-16 flex items-center justify-center">
+      <div className="flex items-center justify-around w-full max-w-xl mx-auto overflow-x-auto gap-1">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center px-1.5 py-1 transition-colors duration-200 min-w-[40px] ${
+              `flex flex-col items-center justify-center px-1 py-1 transition-colors duration-200 min-w-[48px] ${
                 isActive
                   ? "text-primary-600 dark:text-primary-400"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"

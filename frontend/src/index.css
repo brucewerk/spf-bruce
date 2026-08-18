@@ -14,7 +14,7 @@
   }
 
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300;
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-x-hidden;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -41,7 +41,7 @@
 
 @layer components {
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 transition-all duration-300;
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 transition-all duration-300 w-full max-w-full;
   }
 
   .btn-primary {
@@ -58,5 +58,18 @@
 
   .label {
     @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+  }
+
+  /* 🔥 CORREÇÃO DEFINITIVA - ALINHAMENTO E SEGURANÇA DO MENU */
+  .fixed-bottom-nav-safe-area {
+    /* Trava de largura máxima para evitar que o conteúdo estoure para os lados no PC maximizado */
+    max-width: 1536px; /* 2xl (tamanho padrão de tela cheia) */
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    /* Espaço de segurança robusto para o Footer (120px é mais seguro que 100px) */
+    padding-bottom: 120px; 
+    display: block;
+    overflow-x: hidden; /* Impede rolagem lateral causada por elementos grandes */
   }
 }

@@ -42,12 +42,26 @@ import ExportarRelatorios from "./components/exportar/ExportarRelatorios";
 import Notificacoes from "./components/notificacoes/Notificacoes";
 import AnalisesAvancadas from "./components/analises/AnalisesAvancadas";
 
+// 🔥 CRIAÇÃO DE UM LAYOUT SEGURO PARA EVITAR REPETIÇÃO DE CÓDIGO
+const PrivateLayout = ({ children }) => {
+  return (
+    <PrivateRoute>
+      <div className="fixed-bottom-nav-safe-area">
+        {children}
+        <BottomNav />
+        <SettingsMenu />
+        <ThemeToggle />
+      </div>
+    </PrivateRoute>
+  );
+};
+
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 relative overflow-x-hidden">
             <Toaster
               position="top-right"
               toastOptions={{
@@ -60,285 +74,163 @@ function App() {
             />
 
             <Routes>
-              {/* Rotas públicas */}
+              {/* Rotas públicas (sem menu, sem layout fixo) */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
               {/* ============================================ */}
-              {/* ROTAS DO FOOTER - DADOS E RESUMOS */}
+              {/* ROTAS PROTEGIDAS (TODAS COM O MESMO LAYOUT SEGURO) */}
               {/* ============================================ */}
-
               <Route
                 path="/"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Dashboard />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Dashboard />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/evolucao"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <EvolucaoPatrimonial />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <EvolucaoPatrimonial />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/contas"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Contas />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Contas />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/ativos"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Ativos />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Ativos />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/passivos"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Passivos />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Passivos />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/investimentos"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Investimentos />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Investimentos />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/exercicios"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <ExercicioList />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <ExercicioList />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/exercicios/:id"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <ExercicioForm />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <ExercicioForm />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/perfil"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Profile />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Profile />
+                  </PrivateLayout>
                 }
               />
-
-              {/* ============================================ */}
-              {/* ROTAS DA ENGRENAGEM - CADASTROS/PADRÕES */}
-              {/* ============================================ */}
-
               <Route
                 path="/categorias-ativos"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <CategoriasAtivo />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <CategoriasAtivo />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/categorias-passivos"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <CategoriasPassivo />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <CategoriasPassivo />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/tipos-investimento"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <TiposInvestimento />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <TiposInvestimento />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/produtos-investimento"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <ProdutosInvestimento />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <ProdutosInvestimento />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/ativos-padrao"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <AtivosPadrao />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <AtivosPadrao />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/passivos-padrao"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <PassivosPadrao />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <PassivosPadrao />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/investimentos-padrao"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <InvestimentosPadrao />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <InvestimentosPadrao />
+                  </PrivateLayout>
                 }
               />
-
-              {/* ============================================ */}
-              {/* ROTAS DE FERRAMENTAS */}
-              {/* ============================================ */}
-
               <Route
                 path="/exportar"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <ExportarRelatorios />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <ExportarRelatorios />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/notificacoes"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <Notificacoes />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <Notificacoes />
+                  </PrivateLayout>
                 }
               />
-
               <Route
                 path="/analises"
                 element={
-                  <PrivateRoute>
-                    <>
-                      <AnalisesAvancadas />
-                      <BottomNav />
-                      <SettingsMenu />
-                      <ThemeToggle />
-                    </>
-                  </PrivateRoute>
+                  <PrivateLayout>
+                    <AnalisesAvancadas />
+                  </PrivateLayout>
                 }
               />
 

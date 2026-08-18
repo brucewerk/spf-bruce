@@ -202,7 +202,7 @@ const Contas = () => {
     contas?.reduce((sum, c) => sum + (c.saldoAtual || 0), 0) || 0;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 pb-24">
+    <div className="max-w-6xl w-full mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Contas</h1>
         <button
