@@ -2,7 +2,7 @@
   "name": "spf-bruce-backend",
   "version": "1.0.0",
   "description": "SPF - Sistema Planilha Financeira Backend",
-  "main": "index.js",
+  "main": "api/index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
