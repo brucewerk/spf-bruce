@@ -32,7 +32,6 @@ const EvolucaoPatrimonial = () => {
         return a.month - b.month;
       });
 
-      // Dados para o gráfico (acumulados)
       let passivosAcumulados = 0;
       let ativosAtuais = 0;
       let patrimonioAnterior = 0;
@@ -64,12 +63,10 @@ const EvolucaoPatrimonial = () => {
 
       setDadosGrafico(grafico);
 
-      // Dados para a tabela (reais)
       const tabela = ordenados.map((exercicio, index) => {
         const passivosReais =
           exercicio.passivos?.reduce((sum, p) => sum + (p.valor || 0), 0) || 0;
 
-        // Calcular variação real (diferença do patrimônio em relação ao mês anterior)
         let variacaoReal = 0;
         if (index > 0) {
           const anterior = ordenados[index - 1];
@@ -143,12 +140,16 @@ const EvolucaoPatrimonial = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-2 sm:p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-xs sm:text-sm">
           <p className="font-medium text-gray-900 dark:text-gray-100">
             {label}
           </p>
           {payload.map((entry, index) => (
-            <p key={index} style={{ color: entry.color }} className="text-sm">
+            <p
+              key={index}
+              style={{ color: entry.color }}
+              className="text-xs sm:text-sm"
+            >
               {entry.name}: {formatarMoeda(entry.value)}
             </p>
           ))}
@@ -167,8 +168,8 @@ const EvolucaoPatrimonial = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 pb-24">
-      <h1 className="text-2xl font-bold mb-6">
+    <div className="max-w-4xl mx-auto p-3 sm:p-4 pb-24">
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
         Evolução Patrimonial Acumulada
       </h1>
 
@@ -180,12 +181,12 @@ const EvolucaoPatrimonial = () => {
         </div>
       ) : (
         <>
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          <div className="flex gap-2 mb-4 sm:mb-6 overflow-x-auto pb-2 scrollbar-hide">
             {anos.map((year) => (
               <button
                 key={year}
                 onClick={() => setSelectedYear(year)}
-                className={`px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 whitespace-nowrap ${
                   selectedYear === year
                     ? "bg-primary-600 text-white"
                     : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -198,21 +199,21 @@ const EvolucaoPatrimonial = () => {
 
           {selectedYear && dadosFiltradosGrafico.length > 0 && (
             <>
-              <div className="card mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold">
+              <div className="card mb-4 sm:mb-6 p-3 sm:p-4">
+                <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-4">
+                  <h2 className="text-sm sm:text-lg font-semibold">
                     Evolução Acumulada - {selectedYear}
                   </h2>
                   <button
                     onClick={resetLegends}
-                    className="p-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2"
+                    className="p-1.5 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
                     title="Resetar legendas"
                   >
-                    <RefreshCw className="w-4 h-4" />
-                    Resetar
+                    <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Resetar</span>
                   </button>
                 </div>
-                <div className="h-80">
+                <div className="h-48 sm:h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={dadosFiltradosGrafico}>
                       <CartesianGrid
@@ -220,22 +221,31 @@ const EvolucaoPatrimonial = () => {
                         stroke="#374151"
                         opacity={0.1}
                       />
-                      <XAxis dataKey="periodo" stroke="#6b7280" fontSize={12} />
+                      <XAxis
+                        dataKey="periodo"
+                        stroke="#6b7280"
+                        fontSize={9}
+                        tick={{ fontSize: 8 }}
+                      />
                       <YAxis
                         stroke="#6b7280"
-                        fontSize={12}
+                        fontSize={9}
                         domain={[0, getMaxValue(dadosFiltradosGrafico)]}
                         tickFormatter={(value) => formatarMoeda(value)}
+                        width={50}
                       />
                       <Tooltip content={<CustomTooltip />} />
-                      <Legend onClick={(e) => handleLegendClick(e.dataKey)} />
+                      <Legend
+                        onClick={(e) => handleLegendClick(e.dataKey)}
+                        wrapperStyle={{ fontSize: "9px" }}
+                      />
                       {activeLines.ativos && (
                         <Line
                           type="monotone"
                           dataKey="ativos"
                           stroke="#3b82f6"
                           strokeWidth={2}
-                          dot={{ fill: "#3b82f6" }}
+                          dot={{ fill: "#3b82f6", r: 2 }}
                           name="Ativos (Atual)"
                         />
                       )}
@@ -245,7 +255,7 @@ const EvolucaoPatrimonial = () => {
                           dataKey="passivos"
                           stroke="#ef4444"
                           strokeWidth={2}
-                          dot={{ fill: "#ef4444" }}
+                          dot={{ fill: "#ef4444", r: 2 }}
                           name="Passivos (Acumulado)"
                         />
                       )}
@@ -255,38 +265,37 @@ const EvolucaoPatrimonial = () => {
                           dataKey="variacao"
                           stroke="#10b981"
                           strokeWidth={3}
-                          dot={{ fill: "#10b981" }}
+                          dot={{ fill: "#10b981", r: 2 }}
                           name="Variação (Acumulada)"
                         />
                       )}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                <p className="text-xs text-gray-400 text-center mt-2">
-                  💡 Clique nas legendas para mostrar/esconder | 🔄 Botão Reset
-                  para restaurar
+                <p className="text-[10px] sm:text-xs text-gray-400 text-center mt-2">
+                  💡 Clique nas legendas | 🔄 Reset para restaurar
                 </p>
               </div>
 
-              <div className="card">
-                <h2 className="text-lg font-semibold mb-4">
+              <div className="card p-3 sm:p-4 overflow-x-auto">
+                <h2 className="text-sm sm:text-lg font-semibold mb-3 sm:mb-4">
                   Resumo Acumulado - {selectedYear}
                 </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div className="min-w-[500px] sm:min-w-full">
+                  <table className="w-full text-xs sm:text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="text-left py-2 px-3 font-medium">
+                        <th className="text-left py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
                           Período
                         </th>
-                        <th className="text-right py-2 px-3 font-medium">
-                          Ativos (Atual)
+                        <th className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
+                          Ativos
                         </th>
-                        <th className="text-right py-2 px-3 font-medium">
-                          Passivos (Real)
+                        <th className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
+                          Passivos
                         </th>
-                        <th className="text-right py-2 px-3 font-medium">
-                          Variação (Real)
+                        <th className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
+                          Variação
                         </th>
                       </tr>
                     </thead>
@@ -296,15 +305,17 @@ const EvolucaoPatrimonial = () => {
                           key={index}
                           className="border-b border-gray-100 dark:border-gray-800"
                         >
-                          <td className="py-2 px-3">{data.periodo}</td>
-                          <td className="text-right py-2 px-3 text-primary-600">
+                          <td className="py-1.5 sm:py-2 px-1.5 sm:px-3">
+                            {data.periodo}
+                          </td>
+                          <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-primary-600 text-[10px] sm:text-sm">
                             {formatarMoeda(data.ativos)}
                           </td>
-                          <td className="text-right py-2 px-3 text-red-600">
+                          <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-red-600 text-[10px] sm:text-sm">
                             {formatarMoeda(data.passivos)}
                           </td>
                           <td
-                            className={`text-right py-2 px-3 font-medium ${
+                            className={`text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium text-[10px] sm:text-sm ${
                               data.variacao >= 0
                                 ? "text-green-600"
                                 : "text-red-600"
@@ -318,19 +329,19 @@ const EvolucaoPatrimonial = () => {
                     </tbody>
                     <tfoot>
                       <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-bold">
-                        <td className="py-2 px-3">TOTAL DO ANO</td>
+                        <td className="py-1.5 sm:py-2 px-1.5 sm:px-3">TOTAL</td>
                         {(() => {
                           const totais = getTotaisAno(dadosFiltradosTabela);
                           return (
                             <>
-                              <td className="text-right py-2 px-3 text-primary-600">
+                              <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-primary-600 text-[10px] sm:text-sm">
                                 {formatarMoeda(totais.ativos)}
                               </td>
-                              <td className="text-right py-2 px-3 text-red-600">
+                              <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-red-600 text-[10px] sm:text-sm">
                                 {formatarMoeda(totais.passivos)}
                               </td>
                               <td
-                                className={`text-right py-2 px-3 ${
+                                className={`text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-[10px] sm:text-sm ${
                                   totais.variacao >= 0
                                     ? "text-green-600"
                                     : "text-red-600"

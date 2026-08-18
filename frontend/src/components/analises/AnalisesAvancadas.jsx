@@ -77,7 +77,6 @@ const AnalisesAvancadas = () => {
     );
   }
 
-  // Dados para gráfico de crescimento
   const crescimentoData =
     dados.crescimento?.map((item) => ({
       periodo: item.periodo,
@@ -85,7 +84,6 @@ const AnalisesAvancadas = () => {
       variacao: item.variacao,
     })) || [];
 
-  // Dados para gráfico de investimentos por tipo
   const investimentosPorTipo = Object.entries(
     dados.analiseInvestimentos?.porTipo || {},
   ).map(([nome, data]) => ({
@@ -94,55 +92,59 @@ const AnalisesAvancadas = () => {
   }));
 
   return (
-    <div className="max-w-6xl mx-auto p-4 pb-24">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">📊 Análises Avançadas</h1>
+    <div className="max-w-6xl mx-auto p-2 sm:p-4 pb-24">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-6">
+        <h1 className="text-lg sm:text-2xl font-bold">📊 Análises Avançadas</h1>
         <button
           onClick={carregarAnalises}
-          className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+          className="p-1.5 sm:p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
         >
-          <RefreshCw className="w-5 h-5" />
+          <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
       </div>
 
-      {/* Resumo */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="card bg-primary-50 dark:bg-primary-900/20 p-3">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-3 mb-3 sm:mb-6">
+        <div className="card bg-primary-50 dark:bg-primary-900/20 p-2 sm:p-3">
+          <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
             Total Exercícios
           </p>
-          <p className="text-xl font-bold text-primary-600 dark:text-primary-400">
+          <p className="text-sm sm:text-xl font-bold text-primary-600 dark:text-primary-400">
             {dados.resumo?.totalExercicios || 0}
           </p>
         </div>
-        <div className="card bg-green-50 dark:bg-green-900/20 p-3">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="card bg-green-50 dark:bg-green-900/20 p-2 sm:p-3">
+          <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
             Investimentos
           </p>
-          <p className="text-xl font-bold text-green-600 dark:text-green-400">
+          <p className="text-sm sm:text-xl font-bold text-green-600 dark:text-green-400">
             {dados.resumo?.totalInvestimentos || 0}
           </p>
         </div>
-        <div className="card bg-blue-50 dark:bg-blue-900/20 p-3">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Contas</p>
-          <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="card bg-blue-50 dark:bg-blue-900/20 p-2 sm:p-3">
+          <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
+            Contas
+          </p>
+          <p className="text-sm sm:text-xl font-bold text-blue-600 dark:text-blue-400">
             {dados.resumo?.totalContas || 0}
           </p>
         </div>
-        <div className="card bg-purple-50 dark:bg-purple-900/20 p-3">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Período</p>
-          <p className="text-sm font-bold text-purple-600 dark:text-purple-400">
+        <div className="card bg-purple-50 dark:bg-purple-900/20 p-2 sm:p-3">
+          <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
+            Período
+          </p>
+          <p className="text-[10px] sm:text-sm font-bold text-purple-600 dark:text-purple-400 truncate">
             {dados.resumo?.primeiroRegistro || "-"} →{" "}
             {dados.resumo?.ultimoRegistro || "-"}
           </p>
         </div>
       </div>
 
-      {/* Gráfico de Crescimento */}
       {crescimentoData.length > 0 && (
-        <div className="card mb-6 p-4">
-          <h2 className="text-lg font-semibold mb-4">Evolução Patrimonial</h2>
-          <div className="h-64">
+        <div className="card mb-3 sm:mb-6 p-2 sm:p-4">
+          <h2 className="text-xs sm:text-lg font-semibold mb-2 sm:mb-4">
+            Evolução Patrimonial
+          </h2>
+          <div className="h-44 sm:h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={crescimentoData}>
                 <CartesianGrid
@@ -150,10 +152,15 @@ const AnalisesAvancadas = () => {
                   stroke="#374151"
                   opacity={0.1}
                 />
-                <XAxis dataKey="periodo" stroke="#6b7280" fontSize={11} />
-                <YAxis stroke="#6b7280" fontSize={11} />
+                <XAxis
+                  dataKey="periodo"
+                  stroke="#6b7280"
+                  fontSize={9}
+                  tick={{ fontSize: 8 }}
+                />
+                <YAxis stroke="#6b7280" fontSize={9} />
                 <Tooltip formatter={(value) => formatarMoeda(value)} />
-                <Legend />
+                <Legend wrapperStyle={{ fontSize: "9px" }} />
                 <Line
                   type="monotone"
                   dataKey="patrimonio"
@@ -174,54 +181,52 @@ const AnalisesAvancadas = () => {
         </div>
       )}
 
-      {/* Análise de Eficiência */}
       {dados.eficiencia && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <div className="card p-4">
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-3 mb-3 sm:mb-6">
+          <div className="card p-2 sm:p-4">
+            <h2 className="text-[8px] sm:text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1 sm:mb-3">
               📈 Melhor Mês
             </h2>
             {dados.eficiencia.melhorMes ? (
               <>
-                <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                <p className="text-xs sm:text-xl font-bold text-green-600 dark:text-green-400 truncate">
                   {formatarMoeda(dados.eficiencia.melhorMes.patrimonio)}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-[8px] sm:text-sm text-gray-500">
                   {dados.eficiencia.melhorMes.mes}
                 </p>
               </>
             ) : (
-              <p className="text-gray-400">Nenhum dado</p>
+              <p className="text-gray-400 text-sm">Nenhum dado</p>
             )}
           </div>
-          <div className="card p-4">
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+          <div className="card p-2 sm:p-4">
+            <h2 className="text-[8px] sm:text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1 sm:mb-3">
               📉 Pior Mês
             </h2>
             {dados.eficiencia.piorMes ? (
               <>
-                <p className="text-xl font-bold text-red-600 dark:text-red-400">
+                <p className="text-xs sm:text-xl font-bold text-red-600 dark:text-red-400 truncate">
                   {formatarMoeda(dados.eficiencia.piorMes.patrimonio)}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-[8px] sm:text-sm text-gray-500">
                   {dados.eficiencia.piorMes.mes}
                 </p>
               </>
             ) : (
-              <p className="text-gray-400">Nenhum dado</p>
+              <p className="text-gray-400 text-sm">Nenhum dado</p>
             )}
           </div>
         </div>
       )}
 
-      {/* Investimentos por Tipo */}
       {investimentosPorTipo.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="card p-4">
-            <h2 className="text-lg font-semibold mb-4">
-              Distribuição de Investimentos
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-6">
+          <div className="card p-2 sm:p-4">
+            <h2 className="text-xs sm:text-lg font-semibold mb-2 sm:mb-4">
+              Distribuição
             </h2>
-            <div className="h-56">
+            <div className="h-44 sm:h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <RePieChart>
                   <Pie
@@ -232,10 +237,11 @@ const AnalisesAvancadas = () => {
                     label={({ name, percent }) =>
                       `${name} ${(percent * 100).toFixed(0)}%`
                     }
-                    outerRadius={70}
-                    innerRadius={25}
+                    outerRadius={55}
+                    innerRadius={20}
                     fill="#8884d8"
                     dataKey="value"
+                    fontSize={8}
                   >
                     {investimentosPorTipo.map((entry, index) => (
                       <Cell
@@ -249,42 +255,42 @@ const AnalisesAvancadas = () => {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="card p-4">
-            <h2 className="text-lg font-semibold mb-4">
-              Resumo de Investimentos
+          <div className="card p-2 sm:p-4">
+            <h2 className="text-xs sm:text-lg font-semibold mb-2 sm:mb-4">
+              Resumo
             </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
+            <div className="space-y-1.5 sm:space-y-3">
+              <div className="flex flex-wrap justify-between gap-1">
+                <span className="text-[8px] sm:text-sm text-gray-500 dark:text-gray-400">
                   Total Investido
                 </span>
-                <span className="font-medium">
+                <span className="text-[10px] sm:text-base font-medium truncate">
                   {formatarMoeda(dados.analiseInvestimentos?.totalInvestido)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
+              <div className="flex flex-wrap justify-between gap-1">
+                <span className="text-[8px] sm:text-sm text-gray-500 dark:text-gray-400">
                   Saldo Total
                 </span>
-                <span className="font-medium text-green-600">
+                <span className="text-[10px] sm:text-base font-medium text-green-600 truncate">
                   {formatarMoeda(dados.analiseInvestimentos?.saldoTotal)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Rendimento Total
+              <div className="flex flex-wrap justify-between gap-1">
+                <span className="text-[8px] sm:text-sm text-gray-500 dark:text-gray-400">
+                  Rendimento
                 </span>
                 <span
-                  className={`font-medium ${(dados.analiseInvestimentos?.rendimentoTotal || 0) >= 0 ? "text-green-600" : "text-red-600"}`}
+                  className={`text-[10px] sm:text-base font-medium truncate ${(dados.analiseInvestimentos?.rendimentoTotal || 0) >= 0 ? "text-green-600" : "text-red-600"}`}
                 >
                   {formatarMoeda(dados.analiseInvestimentos?.rendimentoTotal)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
+              <div className="flex flex-wrap justify-between gap-1">
+                <span className="text-[8px] sm:text-sm text-gray-500 dark:text-gray-400">
                   Quantidade
                 </span>
-                <span className="font-medium">
+                <span className="text-[10px] sm:text-base font-medium">
                   {dados.analiseInvestimentos?.quantidade || 0}
                 </span>
               </div>
@@ -293,32 +299,33 @@ const AnalisesAvancadas = () => {
         </div>
       )}
 
-      {/* Projeção */}
       {dados.projecao && (
-        <div className="card p-4">
-          <h2 className="text-lg font-semibold mb-4">🔮 Projeção Anual</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="card p-2 sm:p-4">
+          <h2 className="text-xs sm:text-lg font-semibold mb-2 sm:mb-4">
+            🔮 Projeção Anual
+          </h2>
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-4">
+            <div className="text-center">
+              <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
                 Média Mensal
               </p>
-              <p className="text-xl font-bold text-primary-600">
+              <p className="text-xs sm:text-xl font-bold text-primary-600 truncate">
                 {formatarMoeda(dados.projecao.mediaPatrimonio)}
               </p>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-center">
+              <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
                 Projeção Anual
               </p>
-              <p className="text-xl font-bold text-green-600">
+              <p className="text-xs sm:text-xl font-bold text-green-600 truncate">
                 {formatarMoeda(dados.projecao.projecaoAnual)}
               </p>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Base de Cálculo
+            <div className="text-center">
+              <p className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400">
+                Base
               </p>
-              <p className="text-xl font-bold text-gray-600">
+              <p className="text-xs sm:text-xl font-bold text-gray-600">
                 {dados.projecao.baseMeses} meses
               </p>
             </div>

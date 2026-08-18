@@ -24,7 +24,6 @@ const Passivos = () => {
   const [loading, setLoading] = useState(true);
   const [totalMaisAtual, setTotalMaisAtual] = useState(0);
   const [periodo, setPeriodo] = useState("");
-
   const [hiddenPieSlices, setHiddenPieSlices] = useState({});
   const [hiddenBarItems, setHiddenBarItems] = useState({});
 
@@ -73,7 +72,6 @@ const Passivos = () => {
         setPeriodo("");
       }
       setLoading(false);
-
       setHiddenPieSlices({});
       setHiddenBarItems({});
     } else if (exercicios && exercicios.length === 0) {
@@ -151,7 +149,7 @@ const Passivos = () => {
     .slice(0, 5)
     .map((p, index) => ({
       id: index,
-      name: p.nome.length > 15 ? p.nome.substring(0, 15) + "..." : p.nome,
+      name: p.nome.length > 12 ? p.nome.substring(0, 12) + "..." : p.nome,
       value: p.valor || 0,
       categoria: p.categoria || "Outros",
       fullName: p.nome,
@@ -183,32 +181,19 @@ const Passivos = () => {
     setHiddenBarItems({});
   };
 
-  const handlePieClick = (data, index) => {
-    const originalIndex = dadosGrafico.findIndex((d) => d.name === data.name);
-    if (originalIndex !== -1) {
-      togglePieSlice(originalIndex);
-    }
-  };
-
   const handlePieLegendClick = (e) => {
     const index = dadosGrafico.findIndex((d) => d.name === e.value);
-    if (index !== -1) {
-      togglePieSlice(index);
-    }
-  };
-
-  const handleBarCellClick = (entry) => {
-    const index = topDespesas.findIndex((d) => d.name === entry.name);
-    if (index !== -1) {
-      toggleBarItem(index);
-    }
+    if (index !== -1) togglePieSlice(index);
   };
 
   const handleBarLegendClick = (e) => {
     const index = topDespesas.findIndex((d) => d.name === e.value);
-    if (index !== -1) {
-      toggleBarItem(index);
-    }
+    if (index !== -1) toggleBarItem(index);
+  };
+
+  const handleBarCellClick = (entry) => {
+    const index = topDespesas.findIndex((d) => d.name === entry.name);
+    if (index !== -1) toggleBarItem(index);
   };
 
   if (loading || loadingExercicios) {
@@ -220,19 +205,19 @@ const Passivos = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-3 sm:p-4 pb-24">
-      <div className="flex flex-wrap justify-between items-center gap-2 mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold">
+    <div className="max-w-6xl mx-auto p-2 sm:p-4 pb-24">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-6">
+        <h1 className="text-lg sm:text-2xl font-bold flex flex-wrap items-center gap-1">
           💳 Despesas{" "}
           {periodo && (
-            <span className="text-base sm:text-lg font-normal text-gray-500">
+            <span className="text-sm sm:text-lg font-normal text-gray-500">
               - {periodo}
             </span>
           )}
         </h1>
         <button
           onClick={() => (window.location.href = "/passivos-padrao")}
-          className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+          className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
         >
           <span>⚙️</span>{" "}
           <span className="hidden sm:inline">Gerenciar Padrões</span>
@@ -251,53 +236,52 @@ const Passivos = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-3 mb-3 sm:mb-6">
             <div className="card bg-red-50 dark:bg-red-900/20 p-2 sm:p-3">
-              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+              <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400">
                 Total do Mês
               </p>
-              <p className="text-sm sm:text-xl font-bold text-red-600 dark:text-red-400">
+              <p className="text-xs sm:text-xl font-bold text-red-600 dark:text-red-400 truncate">
                 {formatarMoeda(totalPassivos)}
               </p>
             </div>
             <div className="card bg-blue-50 dark:bg-blue-900/20 p-2 sm:p-3">
-              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
+              <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400">
                 Quantidade
               </p>
-              <p className="text-sm sm:text-xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-xs sm:text-xl font-bold text-blue-600 dark:text-blue-400">
                 {passivos?.length || 0}
               </p>
             </div>
             <div className="card bg-purple-50 dark:bg-purple-900/20 p-2 sm:p-3">
-              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
-                Média do Mês
+              <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400">
+                Média
               </p>
-              <p className="text-sm sm:text-xl font-bold text-purple-600 dark:text-purple-400">
+              <p className="text-xs sm:text-xl font-bold text-purple-600 dark:text-purple-400 truncate">
                 {passivos?.length > 0
                   ? formatarMoeda(totalPassivos / passivos.length)
                   : "R$ 0,00"}
               </p>
             </div>
             <div className="card bg-green-50 dark:bg-green-900/20 p-2 sm:p-3">
-              <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400">
-                💰 Total Atual
+              <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400">
+                💰 Total
               </p>
-              <p className="text-sm sm:text-xl font-bold text-green-600 dark:text-green-400">
+              <p className="text-xs sm:text-xl font-bold text-green-600 dark:text-green-400 truncate">
                 {formatarMoeda(totalMaisAtual)}
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {/* Gráfico 1: Distribuição por Categoria - PIE */}
-            <div className="card p-3 sm:p-4">
-              <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-4">
-                <h2 className="text-sm sm:text-lg font-semibold">
-                  Distribuição por Categoria
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-6">
+            <div className="card p-2 sm:p-4">
+              <div className="flex flex-wrap justify-between items-center gap-2 mb-2 sm:mb-4">
+                <h2 className="text-xs sm:text-lg font-semibold">
+                  Distribuição
                 </h2>
                 <button
                   onClick={resetAllLegends}
-                  className="p-1.5 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+                  className="p-1 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
                   title="Resetar legendas"
                 >
                   <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -305,7 +289,7 @@ const Passivos = () => {
                 </button>
               </div>
               {dadosGrafico.length > 0 ? (
-                <div className="h-56 sm:h-64 w-full">
+                <div className="h-44 sm:h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <RePieChart>
                       <Pie
@@ -316,12 +300,11 @@ const Passivos = () => {
                         label={({ name, percent }) =>
                           `${name} ${(percent * 100).toFixed(0)}%`
                         }
-                        outerRadius={70}
-                        innerRadius={25}
+                        outerRadius={55}
+                        innerRadius={20}
                         fill="#8884d8"
                         dataKey="value"
-                        fontSize={10}
-                        onClick={handlePieClick}
+                        fontSize={8}
                       >
                         {filteredPieData.map((entry, index) => {
                           const originalIndex = dadosGrafico.findIndex(
@@ -338,31 +321,28 @@ const Passivos = () => {
                       </Pie>
                       <Tooltip formatter={(value) => formatarMoeda(value)} />
                       <Legend
-                        wrapperStyle={{ fontSize: "10px", cursor: "pointer" }}
+                        wrapperStyle={{ fontSize: "8px" }}
                         onClick={handlePieLegendClick}
                       />
                     </RePieChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
-                <div className="h-56 sm:h-64 flex items-center justify-center text-gray-400">
+                <div className="h-44 sm:h-64 flex items-center justify-center text-gray-400">
                   Nenhum dado disponível
                 </div>
               )}
-              <p className="text-[10px] sm:text-xs text-gray-400 text-center mt-2">
-                📊 Clique nas fatias ou legendas
+              <p className="text-[8px] sm:text-xs text-gray-400 text-center mt-2">
+                💡 Clique nas legendas
               </p>
             </div>
 
-            {/* Gráfico 2: Top 5 Despesas do Mês - BARRA HORIZONTAL */}
-            <div className="card p-3 sm:p-4">
-              <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-4">
-                <h2 className="text-sm sm:text-lg font-semibold">
-                  Top 5 Despesas do Mês
-                </h2>
+            <div className="card p-2 sm:p-4">
+              <div className="flex flex-wrap justify-between items-center gap-2 mb-2 sm:mb-4">
+                <h2 className="text-xs sm:text-lg font-semibold">Top 5</h2>
                 <button
                   onClick={resetAllLegends}
-                  className="p-1.5 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
+                  className="p-1 sm:p-2 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-1 sm:gap-2"
                   title="Resetar legendas"
                 >
                   <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -370,7 +350,7 @@ const Passivos = () => {
                 </button>
               </div>
               {topDespesas.length > 0 ? (
-                <div className="h-56 sm:h-64 w-full">
+                <div className="h-44 sm:h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={filteredBarData} layout="vertical">
                       <CartesianGrid
@@ -378,17 +358,17 @@ const Passivos = () => {
                         stroke="#374151"
                         opacity={0.1}
                       />
-                      <XAxis type="number" stroke="#6b7280" fontSize={9} />
+                      <XAxis type="number" stroke="#6b7280" fontSize={8} />
                       <YAxis
                         dataKey="name"
                         type="category"
                         stroke="#6b7280"
-                        fontSize={8}
-                        width={60}
+                        fontSize={7}
+                        width={40}
                       />
                       <Tooltip formatter={(value) => formatarMoeda(value)} />
                       <Legend
-                        wrapperStyle={{ fontSize: "10px", cursor: "pointer" }}
+                        wrapperStyle={{ fontSize: "8px" }}
                         onClick={handleBarLegendClick}
                       />
                       <Bar dataKey="value" fill="#ef4444" radius={[0, 4, 4, 0]}>
@@ -410,89 +390,93 @@ const Passivos = () => {
                   </ResponsiveContainer>
                 </div>
               ) : (
-                <div className="h-56 sm:h-64 flex items-center justify-center text-gray-400">
+                <div className="h-44 sm:h-64 flex items-center justify-center text-gray-400">
                   Nenhum dado disponível
                 </div>
               )}
-              <p className="text-[10px] sm:text-xs text-gray-400 text-center mt-2">
-                📊 Clique nas barras ou legendas
+              <p className="text-[8px] sm:text-xs text-gray-400 text-center mt-2">
+                💡 Clique nas barras ou legendas
               </p>
             </div>
           </div>
 
-          <div className="card overflow-x-auto p-3 sm:p-4">
-            <h2 className="text-sm sm:text-lg font-semibold mb-4">
+          <div className="card overflow-x-auto p-2 sm:p-4">
+            <h2 className="text-xs sm:text-lg font-semibold mb-2 sm:mb-4">
               Resumo por Categoria
             </h2>
-            <table className="w-full text-xs sm:text-sm min-w-[400px]">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left py-2 px-2 sm:px-3 font-medium">
-                    Categoria
-                  </th>
-                  <th className="text-right py-2 px-2 sm:px-3 font-medium">
-                    Quantidade
-                  </th>
-                  <th className="text-right py-2 px-2 sm:px-3 font-medium">
-                    Total
-                  </th>
-                  <th className="text-right py-2 px-2 sm:px-3 font-medium">
-                    Média
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {dadosGrafico.map((item, index) => {
-                  const categoria = categoriasPassivo?.find(
-                    (c) => c.nome === item.name,
-                  );
-                  return (
-                    <tr
-                      key={index}
-                      className="border-b border-gray-100 dark:border-gray-800"
-                    >
-                      <td className="py-2 px-2 sm:px-3 flex items-center gap-1 sm:gap-2">
-                        {categoria && (
-                          <>
-                            <div
-                              className="w-2 h-2 sm:w-3 sm:h-3 rounded-full"
-                              style={{ backgroundColor: categoria.cor }}
-                            />
-                            <span className="text-base sm:text-xl">
-                              {categoria.icone}
-                            </span>
-                          </>
-                        )}
-                        <span className="text-xs sm:text-sm">{item.name}</span>
-                      </td>
-                      <td className="text-right py-2 px-2 sm:px-3">
-                        {item.quantidade}
-                      </td>
-                      <td className="text-right py-2 px-2 sm:px-3 font-medium text-red-600 dark:text-red-400 text-xs sm:text-sm">
-                        {formatarMoeda(item.value)}
-                      </td>
-                      <td className="text-right py-2 px-2 sm:px-3 text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
-                        {formatarMoeda(item.media)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-bold">
-                  <td className="py-2 px-2 sm:px-3">TOTAL</td>
-                  <td className="text-right py-2 px-2 sm:px-3">
-                    {passivos?.length || 0}
-                  </td>
-                  <td className="text-right py-2 px-2 sm:px-3 text-red-600 dark:text-red-400 text-xs sm:text-sm">
-                    {formatarMoeda(totalPassivos)}
-                  </td>
-                  <td className="text-right py-2 px-2 sm:px-3 text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
-                    {formatarMoeda(somaMedias)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+            <div className="min-w-[400px] sm:min-w-full">
+              <table className="w-full text-[10px] sm:text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-1 sm:py-2 px-1 sm:px-3 font-medium">
+                      Categoria
+                    </th>
+                    <th className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium">
+                      Qtd
+                    </th>
+                    <th className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium">
+                      Total
+                    </th>
+                    <th className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium">
+                      Média
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dadosGrafico.map((item, index) => {
+                    const categoria = categoriasPassivo?.find(
+                      (c) => c.nome === item.name,
+                    );
+                    return (
+                      <tr
+                        key={index}
+                        className="border-b border-gray-100 dark:border-gray-800"
+                      >
+                        <td className="py-1 sm:py-2 px-1 sm:px-3 flex items-center gap-1 sm:gap-2">
+                          {categoria && (
+                            <>
+                              <div
+                                className="w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full"
+                                style={{ backgroundColor: categoria.cor }}
+                              />
+                              <span className="text-sm sm:text-xl">
+                                {categoria.icone}
+                              </span>
+                            </>
+                          )}
+                          <span className="text-[8px] sm:text-sm truncate max-w-[60px] sm:max-w-none">
+                            {item.name}
+                          </span>
+                        </td>
+                        <td className="text-right py-1 sm:py-2 px-1 sm:px-3">
+                          {item.quantidade}
+                        </td>
+                        <td className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium text-red-600 dark:text-red-400 text-[8px] sm:text-sm">
+                          {formatarMoeda(item.value)}
+                        </td>
+                        <td className="text-right py-1 sm:py-2 px-1 sm:px-3 text-gray-600 dark:text-gray-400 text-[8px] sm:text-sm">
+                          {formatarMoeda(item.media)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-bold">
+                    <td className="py-1 sm:py-2 px-1 sm:px-3">TOTAL</td>
+                    <td className="text-right py-1 sm:py-2 px-1 sm:px-3">
+                      {passivos?.length || 0}
+                    </td>
+                    <td className="text-right py-1 sm:py-2 px-1 sm:px-3 text-red-600 dark:text-red-400 text-[8px] sm:text-sm">
+                      {formatarMoeda(totalPassivos)}
+                    </td>
+                    <td className="text-right py-1 sm:py-2 px-1 sm:px-3 text-gray-600 dark:text-gray-400 text-[8px] sm:text-sm">
+                      {formatarMoeda(somaMedias)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
         </>
       )}
