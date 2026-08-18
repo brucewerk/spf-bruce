@@ -1,52 +1,41 @@
-// api/index.js - Entry point for Vercel serverless deployment
+// backend/index.js - Entry point para Vercel
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
 // Importar rotas
-const authRoutes = require("../src/routes/authRoutes");
-const exercicioRoutes = require("../src/routes/exercicioRoutes");
-const padraoRoutes = require("../src/routes/padraoRoutes");
-const contaRoutes = require("../src/routes/contaRoutes");
-const investimentoRoutes = require("../src/routes/investimentoRoutes");
-const categoriaRoutes = require("../src/routes/categoriaRoutes");
-const tipoInvestimentoRoutes = require("../src/routes/tipoInvestimentoRoutes");
-const produtoInvestimentoRoutes = require("../src/routes/produtoInvestimentoRoutes");
-const ativoRoutes = require("../src/routes/ativoRoutes");
-const passivoRoutes = require("../src/routes/passivoRoutes");
-const reportRoutes = require("../src/routes/reportRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const exercicioRoutes = require("./src/routes/exercicioRoutes");
+const padraoRoutes = require("./src/routes/padraoRoutes");
+const contaRoutes = require("./src/routes/contaRoutes");
+const investimentoRoutes = require("./src/routes/investimentoRoutes");
+const categoriaRoutes = require("./src/routes/categoriaRoutes");
+const tipoInvestimentoRoutes = require("./src/routes/tipoInvestimentoRoutes");
+const produtoInvestimentoRoutes = require("./src/routes/produtoInvestimentoRoutes");
+const ativoRoutes = require("./src/routes/ativoRoutes");
+const passivoRoutes = require("./src/routes/passivoRoutes");
+const reportRoutes = require("./src/routes/reportRoutes");
 
 const app = express();
 
 // ============================================
-// CONFIGURAÇÃO CORS CORRIGIDA
+// CORS - Configuração para produção
 // ============================================
-const corsOptions = {
-  origin: [
-    "https://spf-bruce-frontend.vercel.app",
-    "https://spf-bruce-frontend-148ibswy5-kling-klang.vercel.app",
-    "https://spf-bruce-frontend-mhv6qrsdz-kling-klang.vercel.app",
-    "https://spf-bruce-frontend-fdglxow4k-kling-klang.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:3000",
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "X-Requested-With",
-    "Accept",
-  ],
-  exposedHeaders: ["Content-Range", "X-Content-Range"],
-};
+const allowedOrigins = [
+  "https://spf-bruce-frontend.vercel.app",
+  "https://spf-bruce-frontend-148ibswy5-kling-klang.vercel.app",
+  "https://spf-bruce-frontend-mhv6qrsdz-kling-klang.vercel.app",
+  "https://spf-bruce-frontend-fdglxow4k-kling-klang.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
 
-app.use(cors(corsOptions));
-
-// Middleware adicional para garantir CORS em todas as respostas
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Methods",
@@ -57,7 +46,6 @@ app.use((req, res, next) => {
     "Content-Type, Authorization, X-Requested-With, Accept",
   );
 
-  // Responder imediatamente a requisições OPTIONS (preflight)
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
@@ -68,19 +56,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ============================================
-// CONEXÃO COM MONGODB
+// MongoDB Connection
 // ============================================
 const connectDB = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      console.log("✅ MongoDB conectado com sucesso!");
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log("✅ MongoDB conectado!");
     }
   } catch (error) {
-    console.error("❌ Erro ao conectar MongoDB:", error.message);
+    console.error("❌ MongoDB:", error.message);
   }
 };
 
@@ -90,7 +75,7 @@ app.use(async (req, res, next) => {
 });
 
 // ============================================
-// ROTAS
+// Rotas
 // ============================================
 app.use("/api/auth", authRoutes);
 app.use("/api/exercicios", exercicioRoutes);
@@ -105,7 +90,7 @@ app.use("/api/passivos", passivoRoutes);
 app.use("/api/reports", reportRoutes);
 
 // ============================================
-// HEALTH CHECK
+// Health Check
 // ============================================
 app.get("/api/health", (req, res) => {
   res.json({
@@ -123,20 +108,16 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/api/health",
       auth: "/api/auth",
-      exercicios: "/api/exercicios",
-      contas: "/api/contas",
-      investimentos: "/api/investimentos",
-      reports: "/api/reports",
     },
   });
 });
 
 // ============================================
-// MIDDLEWARE DE ERRO
+// Error Handler
 // ============================================
 app.use((err, req, res, next) => {
   console.error("❌ Erro:", err.stack);
-  res.status(500).json({ error: "Erro interno do servidor: " + err.message });
+  res.status(500).json({ error: err.message });
 });
 
 module.exports = app;
