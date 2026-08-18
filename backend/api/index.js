@@ -20,7 +20,7 @@ const reportRoutes = require("../src/routes/reportRoutes");
 const app = express();
 
 // ============================================
-// CORS - ORIGENS ESPECÍFICAS (NÃO USAR WILDCARD)
+// CORS - PRODUÇÃO (VERCEL)
 // ============================================
 const allowedOrigins = [
   "https://spf-bruce-frontend.vercel.app",
@@ -62,14 +62,11 @@ app.use(express.urlencoded({ extended: true }));
 const connectDB = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      console.log("✅ MongoDB conectado com sucesso!");
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log("✅ MongoDB conectado!");
     }
   } catch (error) {
-    console.error("❌ Erro ao conectar MongoDB:", error.message);
+    console.error("❌ MongoDB:", error.message);
   }
 };
 
@@ -112,20 +109,16 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/api/health",
       auth: "/api/auth",
-      exercicios: "/api/exercicios",
-      contas: "/api/contas",
-      investimentos: "/api/investimentos",
-      reports: "/api/reports",
     },
   });
 });
 
 // ============================================
-// MIDDLEWARE DE ERRO
+// Error Handler
 // ============================================
 app.use((err, req, res, next) => {
   console.error("❌ Erro:", err.stack);
-  res.status(500).json({ error: "Erro interno do servidor: " + err.message });
+  res.status(500).json({ error: err.message });
 });
 
 module.exports = app;
