@@ -1,4 +1,4 @@
-// backend/api/index.js - Entry point para Vercel serverless
+// api/index.js - Entry point for Vercel serverless deployment
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -20,20 +20,38 @@ const reportRoutes = require("../src/routes/reportRoutes");
 const app = express();
 
 // ============================================
-// CORS - PERMITIR TODAS AS ORIGENS PARA TESTE
+// CORS - ORIGENS ESPECÍFICAS (NÃO USAR WILDCARD)
 // ============================================
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-    ],
-  }),
-);
+const allowedOrigins = [
+  "https://spf-bruce-frontend.vercel.app",
+  "https://spf-bruce.vercel.app",
+  "https://spf-bruce-frontend-148ibswy5-kling-klang.vercel.app",
+  "https://spf-bruce-frontend-mhv6qrsdz-kling-klang.vercel.app",
+  "https://spf-bruce-frontend-fdglxow4k-kling-klang.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With, Accept",
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,11 +62,14 @@ app.use(express.urlencoded({ extended: true }));
 const connectDB = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI);
-      console.log("✅ MongoDB conectado!");
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log("✅ MongoDB conectado com sucesso!");
     }
   } catch (error) {
-    console.error("❌ MongoDB:", error.message);
+    console.error("❌ Erro ao conectar MongoDB:", error.message);
   }
 };
 
@@ -91,17 +112,20 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/api/health",
       auth: "/api/auth",
+      exercicios: "/api/exercicios",
+      contas: "/api/contas",
+      investimentos: "/api/investimentos",
+      reports: "/api/reports",
     },
   });
 });
 
 // ============================================
-// Error Handler
+// MIDDLEWARE DE ERRO
 // ============================================
 app.use((err, req, res, next) => {
   console.error("❌ Erro:", err.stack);
-  res.status(500).json({ error: err.message });
+  res.status(500).json({ error: "Erro interno do servidor: " + err.message });
 });
 
-// Exportar para Vercel
 module.exports = app;
