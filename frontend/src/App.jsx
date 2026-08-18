@@ -42,7 +42,7 @@ import ExportarRelatorios from "./components/exportar/ExportarRelatorios";
 import Notificacoes from "./components/notificacoes/Notificacoes";
 import AnalisesAvancadas from "./components/analises/AnalisesAvancadas";
 
-// 🔥 CRIAÇÃO DE UM LAYOUT SEGURO PARA EVITAR REPETIÇÃO DE CÓDIGO
+// 🔥 LAYOUT SEGURO
 const PrivateLayout = ({ children }) => {
   return (
     <PrivateRoute>
@@ -74,7 +74,7 @@ function App() {
             />
 
             <Routes>
-              {/* Rotas públicas (sem menu, sem layout fixo) */}
+              {/* Rotas públicas */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
@@ -153,6 +153,7 @@ function App() {
                   </PrivateLayout>
                 }
               />
+
               <Route
                 path="/categorias-ativos"
                 element={
