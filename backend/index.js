@@ -20,22 +20,26 @@ const reportRoutes = require("./src/routes/reportRoutes");
 const app = express();
 
 // ============================================
-// CORS - Configuração para produção
+// CORS - CONFIGURAÇÃO MAIS PERMISSIVA
 // ============================================
-const allowedOrigins = [
-  "https://spf-bruce-frontend.vercel.app",
-  "https://spf-bruce-frontend-148ibswy5-kling-klang.vercel.app",
-  "https://spf-bruce-frontend-mhv6qrsdz-kling-klang.vercel.app",
-  "https://spf-bruce-frontend-fdglxow4k-kling-klang.vercel.app",
-  "http://localhost:5173",
-  "http://localhost:3000",
-];
+// Permitir todas as origens em produção (temporariamente para teste)
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
+    credentials: true,
+  }),
+);
 
+// Middleware adicional para garantir CORS
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Methods",
