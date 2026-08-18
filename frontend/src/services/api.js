@@ -4,9 +4,7 @@ import axios from "axios";
 const getBaseURL = () => {
   // Em produção no Vercel, usar a URL do backend
   if (import.meta.env.PROD) {
-    return (
-      import.meta.env.VITE_API_URL || "https://spf-bruce-backend.vercel.app/api"
-    );
+    return "https://spf-bruce-backend.vercel.app/api";
   }
   // Em desenvolvimento, usar localhost
   return import.meta.env.VITE_API_URL || "http://localhost:5000/api";

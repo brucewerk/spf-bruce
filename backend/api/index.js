@@ -19,24 +19,57 @@ const reportRoutes = require("../src/routes/reportRoutes");
 
 const app = express();
 
-// Configuração CORS atualizada
+// ============================================
+// CONFIGURAÇÃO CORS CORRIGIDA
+// ============================================
 const corsOptions = {
   origin: [
     "https://spf-bruce-frontend.vercel.app",
-    "https://spf-bruce.vercel.app",
+    "https://spf-bruce-frontend-148ibswy5-kling-klang.vercel.app",
+    "https://spf-bruce-frontend-mhv6qrsdz-kling-klang.vercel.app",
+    "https://spf-bruce-frontend-fdglxow4k-kling-klang.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000",
   ],
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+  ],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
 };
 
 app.use(cors(corsOptions));
+
+// Middleware adicional para garantir CORS em todas as respostas
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With, Accept",
+  );
+
+  // Responder imediatamente a requisições OPTIONS (preflight)
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Conectar ao MongoDB
+// ============================================
+// CONEXÃO COM MONGODB
+// ============================================
 const connectDB = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
@@ -51,13 +84,14 @@ const connectDB = async () => {
   }
 };
 
-// Middleware para conectar ao banco em cada requisição
 app.use(async (req, res, next) => {
   await connectDB();
   next();
 });
 
-// Rotas
+// ============================================
+// ROTAS
+// ============================================
 app.use("/api/auth", authRoutes);
 app.use("/api/exercicios", exercicioRoutes);
 app.use("/api/padroes", padraoRoutes);
@@ -70,7 +104,9 @@ app.use("/api/ativos", ativoRoutes);
 app.use("/api/passivos", passivoRoutes);
 app.use("/api/reports", reportRoutes);
 
-// Rota de health check
+// ============================================
+// HEALTH CHECK
+// ============================================
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
@@ -80,7 +116,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Rota raiz
 app.get("/", (req, res) => {
   res.json({
     message: "SPF-Bruce API",
@@ -96,11 +131,12 @@ app.get("/", (req, res) => {
   });
 });
 
-// Middleware de erro
+// ============================================
+// MIDDLEWARE DE ERRO
+// ============================================
 app.use((err, req, res, next) => {
   console.error("❌ Erro:", err.stack);
   res.status(500).json({ error: "Erro interno do servidor: " + err.message });
 });
 
-// Exportar para Vercel
 module.exports = app;
