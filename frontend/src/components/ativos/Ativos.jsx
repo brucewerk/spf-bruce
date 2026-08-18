@@ -424,82 +424,75 @@ const Ativos = () => {
             </div>
           </div>
 
-          <div className="card overflow-x-auto p-2 sm:p-4">
+          {/* 🔥 SUBSTITUIÇÃO DA TABELA POR CARDS 🔥 */}
+          <div className="card p-2 sm:p-4">
             <h2 className="text-xs sm:text-lg font-semibold mb-2 sm:mb-4">
               Resumo por Categoria
             </h2>
-            <div className="min-w-[400px] sm:min-w-full">
-              <table className="w-full text-[10px] sm:text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left py-1 sm:py-2 px-1 sm:px-3 font-medium">
-                      Categoria
-                    </th>
-                    <th className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium">
-                      Qtd
-                    </th>
-                    <th className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium">
-                      Total
-                    </th>
-                    <th className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium">
-                      Média
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dadosGrafico.map((item, index) => {
-                    const categoria = categoriasAtivo?.find(
-                      (c) => c.nome === item.name,
-                    );
-                    return (
-                      <tr
-                        key={index}
-                        className="border-b border-gray-100 dark:border-gray-800"
-                      >
-                        <td className="py-1 sm:py-2 px-1 sm:px-3 flex items-center gap-1 sm:gap-2">
-                          {categoria && (
-                            <>
-                              <div
-                                className="w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full"
-                                style={{ backgroundColor: categoria.cor }}
-                              />
-                              <span className="text-sm sm:text-xl">
-                                {categoria.icone}
-                              </span>
-                            </>
-                          )}
-                          <span className="text-[8px] sm:text-sm truncate max-w-[60px] sm:max-w-none">
-                            {item.name}
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              {dadosGrafico.map((item, index) => {
+                const categoria = categoriasAtivo?.find(
+                  (c) => c.nome === item.name,
+                );
+                return (
+                  <div
+                    key={index}
+                    className="bg-gray-50 dark:bg-gray-700/50 p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm flex flex-col gap-1"
+                  >
+                    <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-600 pb-1 mb-1">
+                      {categoria && (
+                        <>
+                          <div
+                            className="w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: categoria.cor }}
+                          />
+                          <span className="text-sm sm:text-xl">
+                            {categoria.icone}
                           </span>
-                        </td>
-                        <td className="text-right py-1 sm:py-2 px-1 sm:px-3">
-                          {item.quantidade}
-                        </td>
-                        <td className="text-right py-1 sm:py-2 px-1 sm:px-3 font-medium text-primary-600 dark:text-primary-400 text-[8px] sm:text-sm">
-                          {formatarMoeda(item.value)}
-                        </td>
-                        <td className="text-right py-1 sm:py-2 px-1 sm:px-3 text-gray-600 dark:text-gray-400 text-[8px] sm:text-sm">
-                          {formatarMoeda(item.media)}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-                <tfoot>
-                  <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-bold">
-                    <td className="py-1 sm:py-2 px-1 sm:px-3">TOTAL</td>
-                    <td className="text-right py-1 sm:py-2 px-1 sm:px-3">
-                      {ativos?.length || 0}
-                    </td>
-                    <td className="text-right py-1 sm:py-2 px-1 sm:px-3 text-primary-600 dark:text-primary-400 text-[8px] sm:text-sm">
-                      {formatarMoeda(totalAtivos)}
-                    </td>
-                    <td className="text-right py-1 sm:py-2 px-1 sm:px-3 text-gray-600 dark:text-gray-400 text-[8px] sm:text-sm">
-                      {formatarMoeda(somaMedias)}
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
+                        </>
+                      )}
+                      <span className="truncate text-[10px] sm:text-xs">
+                        {item.name}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
+                      <span>Qtd:</span>
+                      <span className="font-medium text-gray-800 dark:text-gray-200">
+                        {item.quantidade}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
+                      <span>Total:</span>
+                      <span className="font-medium text-primary-600">
+                        {formatarMoeda(item.value)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
+                      <span>Média:</span>
+                      <span className="font-medium text-gray-600 dark:text-gray-400">
+                        {formatarMoeda(item.media)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Card de Total */}
+            <div className="mt-3 p-2 sm:p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 flex flex-wrap justify-between items-center gap-2">
+              <span className="font-bold text-gray-700 dark:text-gray-300">
+                TOTAL
+              </span>
+              <div className="flex flex-wrap gap-3 sm:gap-6 text-[10px] sm:text-sm">
+                <span>Qtd: {ativos?.length || 0}</span>
+                <span className="text-primary-600 font-medium">
+                  Total: {formatarMoeda(totalAtivos)}
+                </span>
+                <span className="text-gray-600 font-medium">
+                  Média Geral: {formatarMoeda(somaMedias)}
+                </span>
+              </div>
             </div>
           </div>
         </>

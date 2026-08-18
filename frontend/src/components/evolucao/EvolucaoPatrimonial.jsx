@@ -277,85 +277,71 @@ const EvolucaoPatrimonial = () => {
                 </p>
               </div>
 
-              <div className="card p-3 sm:p-4 overflow-x-auto">
+              {/* 🔥 SUBSTITUIÇÃO DA TABELA POR CARDS 🔥 */}
+              <div className="card p-3 sm:p-4">
                 <h2 className="text-sm sm:text-lg font-semibold mb-3 sm:mb-4">
                   Resumo Acumulado - {selectedYear}
                 </h2>
-                <div className="min-w-[500px] sm:min-w-full">
-                  <table className="w-full text-xs sm:text-sm">
-                    <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="text-left py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
-                          Período
-                        </th>
-                        <th className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
-                          Ativos
-                        </th>
-                        <th className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
-                          Passivos
-                        </th>
-                        <th className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium">
-                          Variação
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {dadosFiltradosTabela.map((data, index) => (
-                        <tr
-                          key={index}
-                          className="border-b border-gray-100 dark:border-gray-800"
+
+                {/* Grid de Cards (2 colunas no celular, 4 no desktop) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                  {dadosFiltradosTabela.map((data, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 dark:bg-gray-700/50 p-2 sm:p-3 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm flex flex-col"
+                    >
+                      <div className="text-[10px] sm:text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1 border-b border-gray-300 dark:border-gray-600 pb-1">
+                        {data.periodo}
+                      </div>
+                      <div className="flex justify-between items-center text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
+                        <span>Ativos:</span>
+                        <span className="text-primary-600 font-medium">
+                          {formatarMoeda(data.ativos)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-[9px] sm:text-xs text-gray-500 dark:text-gray-400">
+                        <span>Passivos:</span>
+                        <span className="text-red-600 font-medium">
+                          {formatarMoeda(data.passivos)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 pt-1 border-t border-gray-200 dark:border-gray-600">
+                        <span className="font-medium">Variação:</span>
+                        <span
+                          className={`font-bold ${data.variacao >= 0 ? "text-green-600" : "text-red-600"}`}
                         >
-                          <td className="py-1.5 sm:py-2 px-1.5 sm:px-3">
-                            {data.periodo}
-                          </td>
-                          <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-primary-600 text-[10px] sm:text-sm">
-                            {formatarMoeda(data.ativos)}
-                          </td>
-                          <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-red-600 text-[10px] sm:text-sm">
-                            {formatarMoeda(data.passivos)}
-                          </td>
-                          <td
-                            className={`text-right py-1.5 sm:py-2 px-1.5 sm:px-3 font-medium text-[10px] sm:text-sm ${
-                              data.variacao >= 0
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {data.variacao >= 0 ? "+" : ""}
-                            {formatarMoeda(data.variacao)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr className="border-t-2 border-gray-300 dark:border-gray-600 font-bold">
-                        <td className="py-1.5 sm:py-2 px-1.5 sm:px-3">TOTAL</td>
-                        {(() => {
-                          const totais = getTotaisAno(dadosFiltradosTabela);
-                          return (
-                            <>
-                              <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-primary-600 text-[10px] sm:text-sm">
-                                {formatarMoeda(totais.ativos)}
-                              </td>
-                              <td className="text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-red-600 text-[10px] sm:text-sm">
-                                {formatarMoeda(totais.passivos)}
-                              </td>
-                              <td
-                                className={`text-right py-1.5 sm:py-2 px-1.5 sm:px-3 text-[10px] sm:text-sm ${
-                                  totais.variacao >= 0
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }`}
-                              >
-                                {totais.variacao >= 0 ? "+" : ""}
-                                {formatarMoeda(totais.variacao)}
-                              </td>
-                            </>
-                          );
-                        })()}
-                      </tr>
-                    </tfoot>
-                  </table>
+                          {data.variacao >= 0 ? "+" : ""}
+                          {formatarMoeda(data.variacao)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Card de Total */}
+                <div className="mt-3 p-2 sm:p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 flex flex-wrap justify-between items-center gap-2">
+                  <span className="font-bold text-gray-700 dark:text-gray-300">
+                    TOTAL
+                  </span>
+                  {(() => {
+                    const totais = getTotaisAno(dadosFiltradosTabela);
+                    return (
+                      <div className="flex flex-wrap gap-3 sm:gap-6 text-[10px] sm:text-sm">
+                        <span className="text-primary-600 font-medium">
+                          Ativos: {formatarMoeda(totais.ativos)}
+                        </span>
+                        <span className="text-red-600 font-medium">
+                          Passivos: {formatarMoeda(totais.passivos)}
+                        </span>
+                        <span
+                          className={`font-bold ${totais.variacao >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
+                          Variação: {totais.variacao >= 0 ? "+" : ""}
+                          {formatarMoeda(totais.variacao)}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </>
