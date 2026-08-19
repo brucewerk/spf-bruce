@@ -4,11 +4,11 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
-# Ambiente
+# Ambiente (Ignora apenas locais, mantém production para deploy)
 .env
 .env.local
-.env.production
 .env.development
+!.env.production
 
 # Builds
 dist/
@@ -46,5 +46,3 @@ temp/
 # Testes
 coverage/
 .nyc_output/
-.vercel
-.env*
