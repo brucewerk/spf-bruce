@@ -263,6 +263,7 @@ Acesse http://localhost:5173 no seu navegador.
 ==========================================
 
 📄 Licença:
+
 Distribuído sob a licença MIT.
 Veja o arquivo LICENSE para mais informações.
 
