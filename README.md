@@ -167,68 +167,78 @@ Git
 Instalação e Configuração
 bash
 
-### 1. Clone o repositório
+### 1. Clone o repositório:
 
 ```text
 git clone https://github.com/brucewerk/spf-bruce.git
 cd spf-bruce
 ```
 
-### 2. Configure o Backend
+### 2. Configure o Backend:
 
+```text
 cd backend
 npm install
+```
 
-### Edite o arquivo .env (Crie a partir do .env.example se necessário)
+### \*Edite o arquivo .env (Crie a partir do .env.example se necessário)
 
+```text
 cp .env.example .env
+```
 
-### Preencha suas credenciais do MongoDB e a chave JWT
+### \*Preencha suas credenciais do MongoDB e a chave JWT
 
-### 3. Configure o Frontend
+### 3. Configure o Frontend:
 
+```text
 cd ../frontend
 npm install
+```
 
-### O arquivo .env já existe, verifique se a URL da API está correta
+### \*O arquivo .env já existe, verifique se a URL da API está correta:
 
-### Ex: VITE_API_URL=http://localhost:5000/api
+```text
+Ex: VITE_API_URL=http://localhost:5000/api
+```
 
-### 4. Rodando Localmente
+### 4. Rodando Localmente:
 
-### Terminal 1 (Backend - porta 5000)
+### \*Terminal 1 (Backend - porta 5000):
 
+```text
 cd backend
 npm start
+```
 
-### ou "npm run dev" para desenvolvimento com nodemon
+### \*ou "npm run dev" para desenvolvimento com nodemon:
 
-### Terminal 2 (Frontend - porta 5173)
+### Terminal 2 (Frontend - porta 5173):
 
+```text
 cd frontend
 npm run dev
+```
 
 ==========================================
 
 Acesse http://localhost:5173 no seu navegador.
-📦 Scripts Disponíveis
-Backend (backend/package.json)
-npm start -> Inicia o servidor em produção
 
-npm run dev -> Inicia o servidor com nodemon (hot reload)
+📦 Scripts Disponíveis:
 
-npm test -> Roda a suíte de testes com Jest
+. Backend (backend/package.json):
 
-npm run vercel-build -> Comando de build para a Vercel
+- npm start -> Inicia o servidor em produção
+- npm run dev -> Inicia o servidor com nodemon (hot reload)
+- npm test -> Roda a suíte de testes com Jest
+- npm run vercel-build -> Comando de build para a Vercel
 
-Frontend (frontend/package.json)
-npm run dev -> Inicia o servidor de desenvolvimento do Vite
+. Frontend (frontend/package.json):
 
-npm run build -> Gera a build de produção na pasta dist
-
-npm run preview -> Pré-visualiza a build localmente
-
-npm run vercel-build -> Comando de build para a Vercel
+- npm run dev -> Inicia o servidor de desenvolvimento do Vite
+- npm run build -> Gera a build de produção na pasta dist
+- npm run preview -> Pré-visualiza a build localmente
+- npm run vercel-build -> Comando de build para a Vercel
 
 ==========================================
 
@@ -242,20 +252,20 @@ npm run vercel-build -> Comando de build para a Vercel
 
 ==========================================
 
-🤝 Como Contribuir
-Faça um fork do projeto
+🤝 Como Contribuir:
 
-Crie uma branch para sua feature (git checkout -b feature/AmazingFeature)
-
-Faça suas alterações e commit (git commit -m 'Add some AmazingFeature')
-
-Faça o push para a branch (git push origin feature/AmazingFeature)
-
-Abra um Pull Request
+- Faça um fork do projeto
+- Crie uma branch para sua feature (git checkout -b feature/AmazingFeature)
+- Faça suas alterações e commit (git commit -m 'Add some AmazingFeature')
+- Faça o push para a branch (git push origin feature/AmazingFeature)
+- Abra um Pull Request
 
 ==========================================
 
-📄 Licença
-Distribuído sob a licença MIT. Veja o arquivo LICENSE para mais informações.
+📄 Licença:
+Distribuído sob a licença MIT.
+Veja o arquivo LICENSE para mais informações.
 
-Desenvolvido por BruCe - Transformando planilhas em sistemas web robustos.
+Desenvolvido por BruCe (2026) - Transformando planilhas em sistemas web robustos.
+
+==========================================
