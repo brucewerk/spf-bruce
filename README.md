@@ -169,8 +169,13 @@ bash
 
 ### 1. Clone o repositório
 
+```text
 git clone https://github.com/brucewerk/spf-bruce.git
+```
+
+```text
 cd spf-bruce
+```
 
 ### 2. Configure o Backend
 
