@@ -167,41 +167,41 @@ Git
 Instalação e Configuração
 bash
 
-# 1. Clone o repositório
+### 1. Clone o repositório
 
 git clone https://github.com/brucewerk/spf-bruce.git
 cd spf-bruce
 
-# 2. Configure o Backend
+### 2. Configure o Backend
 
 cd backend
 npm install
 
-# Edite o arquivo .env (Crie a partir do .env.example se necessário)
+### Edite o arquivo .env (Crie a partir do .env.example se necessário)
 
 cp .env.example .env
 
-# Preencha suas credenciais do MongoDB e a chave JWT
+### Preencha suas credenciais do MongoDB e a chave JWT
 
-# 3. Configure o Frontend
+### 3. Configure o Frontend
 
 cd ../frontend
 npm install
 
-# O arquivo .env já existe, verifique se a URL da API está correta
+### O arquivo .env já existe, verifique se a URL da API está correta
 
-# Ex: VITE_API_URL=http://localhost:5000/api
+### Ex: VITE_API_URL=http://localhost:5000/api
 
-# 4. Rodando Localmente
+### 4. Rodando Localmente
 
-# Terminal 1 (Backend - porta 5000)
+### Terminal 1 (Backend - porta 5000)
 
 cd backend
 npm start
 
-# ou "npm run dev" para desenvolvimento com nodemon
+### ou "npm run dev" para desenvolvimento com nodemon
 
-# Terminal 2 (Frontend - porta 5173)
+### Terminal 2 (Frontend - porta 5173)
 
 cd frontend
 npm run dev
@@ -228,6 +228,8 @@ npm run preview -> Pré-visualiza a build localmente
 
 npm run vercel-build -> Comando de build para a Vercel
 
+==========================================
+
 🗺️ Roadmap (Próximas Melhorias)
 
 - Implementação de gráficos de projeção de longo prazo
@@ -248,6 +250,8 @@ Faça suas alterações e commit (git commit -m 'Add some AmazingFeature')
 Faça o push para a branch (git push origin feature/AmazingFeature)
 
 Abra um Pull Request
+
+==========================================
 
 📄 Licença
 Distribuído sob a licença MIT. Veja o arquivo LICENSE para mais informações.
