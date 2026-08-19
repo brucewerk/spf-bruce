@@ -154,7 +154,7 @@ spf-bruce/
 └── vercel.json                  # Configuração raiz (Monorepo Vercel)
 ```
 
-=======================================================
+==========================================
 
 🚀 Começando
 Pré-requisitos
