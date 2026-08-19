@@ -171,9 +171,6 @@ bash
 
 ```text
 git clone https://github.com/brucewerk/spf-bruce.git
-```
-
-```text
 cd spf-bruce
 ```
 
