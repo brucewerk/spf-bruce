@@ -206,6 +206,8 @@ npm start
 cd frontend
 npm run dev
 
+==========================================
+
 Acesse http://localhost:5173 no seu navegador.
 📦 Scripts Disponíveis
 Backend (backend/package.json)
