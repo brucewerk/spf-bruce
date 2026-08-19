@@ -1,5 +1,10 @@
 const rateLimit = require("express-rate-limit");
 
+// Em ambiente de teste, os testes de integração fazem várias chamadas de
+// login/registro em sequência — sem isso, o próprio rate limiter começaria
+// a barrar os testes depois de poucas requisições.
+const skipInTest = () => process.env.NODE_ENV === "test";
+
 // Limite mais rígido para rotas de autenticação (login/registro), onde
 // força bruta e enumeração de e-mails são o principal risco.
 const authLimiter = rateLimit({
@@ -7,6 +12,7 @@ const authLimiter = rateLimit({
   max: 20, // 20 tentativas por IP a cada 15 min
   standardHeaders: true,
   legacyHeaders: false,
+  skip: skipInTest,
   message: { error: "Muitas tentativas. Tente novamente em alguns minutos." },
 });
 
@@ -16,6 +22,7 @@ const apiLimiter = rateLimit({
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: skipInTest,
   message: { error: "Muitas requisições. Tente novamente em instantes." },
 });
 
