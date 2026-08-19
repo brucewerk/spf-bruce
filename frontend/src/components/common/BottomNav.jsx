@@ -8,7 +8,6 @@ import {
   CreditCard,
   TrendingUp,
   Calendar,
-  User,
 } from "lucide-react";
 
 const BottomNav = () => {
@@ -20,7 +19,6 @@ const BottomNav = () => {
     { to: "/passivos", icon: CreditCard, label: "Passivos" },
     { to: "/investimentos", icon: TrendingUp, label: "Investimentos" },
     { to: "/exercicios", icon: Calendar, label: "Exercícios" },
-    { to: "/perfil", icon: User, label: "Perfil" },
   ];
 
   return (

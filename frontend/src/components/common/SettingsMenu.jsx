@@ -13,12 +13,17 @@ import {
   FileText,
   Bell,
   BarChart3,
+  User,
 } from "lucide-react";
 
 const SettingsMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
+    {
+      section: "Conta",
+      items: [{ to: "/perfil", icon: User, label: "Perfil" }],
+    },
     {
       section: "Categorias",
       items: [
