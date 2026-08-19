@@ -229,11 +229,15 @@ npm run preview -> Pré-visualiza a build localmente
 npm run vercel-build -> Comando de build para a Vercel
 
 🗺️ Roadmap (Próximas Melhorias)
-□ Implementação de gráficos de projeção de longo prazo
-□ Módulo de Orçamento Mensal (Planejamento de gastos)
-□ Integração com APIs bancárias (Open Finance)
-□ Notificações push e por e-mail
-□ Modo offline (PWA)
+
+- Implementação de gráficos de projeção de longo prazo
+- Módulo de Orçamento Mensal (Planejamento de gastos)
+- Integração com APIs bancárias (Open Finance)
+- Notificações push e por e-mail
+- Modo offline (PWA)
+
+==========================================
+
 🤝 Como Contribuir
 Faça um fork do projeto
 
