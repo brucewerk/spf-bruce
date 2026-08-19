@@ -1,5 +1,6 @@
 import React from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { captureException } from "../../config/monitoring";
 
 // Sem isso, um erro de render em qualquer componente (ex.: dado inesperado
 // vindo da API) derrubava a árvore inteira do React e deixava a tela em
@@ -16,6 +17,7 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error("❌ Erro não tratado na interface:", error, errorInfo);
+    captureException(error, { componentStack: errorInfo?.componentStack });
   }
 
   handleReload = () => {

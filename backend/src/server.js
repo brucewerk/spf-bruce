@@ -1,11 +1,21 @@
 require("dotenv").config();
 const createApp = require("./app");
 const connectDB = require("./config/database");
+const monitoring = require("./config/monitoring");
+
+monitoring.init();
 
 const app = createApp();
 
 // Conectar ao MongoDB (uma vez, ao subir o processo)
 connectDB();
+
+// Erros fora do ciclo request/response (ex.: promise rejeitada sem catch em
+// algum lugar) antes só derrubavam o processo sem deixar rastro nenhum.
+process.on("unhandledRejection", (reason) => {
+  console.error("❌ Unhandled Rejection:", reason);
+  monitoring.captureException(reason);
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -2,6 +2,9 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const createApp = require("../src/app");
+const monitoring = require("../src/config/monitoring");
+
+monitoring.init();
 
 // ============================================
 // MongoDB Connection (reaproveita conexão entre invocações serverless)
@@ -14,6 +17,7 @@ const connectDB = async () => {
     }
   } catch (error) {
     console.error("❌ MongoDB:", error.message);
+    monitoring.captureException(error);
   }
 };
 

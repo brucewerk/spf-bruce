@@ -21,7 +21,10 @@
     "exceljs": "^4.4.0",
     "pdfmake": "^0.2.7",
     "helmet": "^7.1.0",
-    "express-rate-limit": "^7.1.5"
+    "express-rate-limit": "^7.1.5",
+    "@sentry/node": "^8.42.0",
+    "@upstash/redis": "^1.34.3",
+    "@upstash/ratelimit": "^2.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",

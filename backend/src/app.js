@@ -2,6 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const { corsMiddleware } = require("./config/cors");
 const { authLimiter, apiLimiter } = require("./middleware/rateLimit");
+const monitoring = require("./config/monitoring");
 
 // Importar rotas
 const authRoutes = require("./routes/authRoutes");
@@ -73,6 +74,10 @@ const createApp = ({ preRouteMiddleware = [] } = {}) => {
   // Nunca vaza detalhes internos (stack, msg de driver) ao cliente
   app.use((err, req, res, next) => {
     console.error("❌ Erro:", err.stack);
+    monitoring.captureException(err, {
+      path: req.originalUrl,
+      method: req.method,
+    });
     res.status(500).json({ error: "Erro interno do servidor" });
   });
 

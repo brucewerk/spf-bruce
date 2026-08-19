@@ -56,7 +56,10 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
+        {/* 🔥 ADIÇÃO DAS FUTURE FLAGS PARA ELIMINAR O AVISO DO CONSOLE */}
+        <Router
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <Toaster
             position="top-right"
             toastOptions={{
@@ -89,10 +92,7 @@ function App() {
             {/* ============================================ */}
             {/* ROTAS DA ENGRENAGEM - CADASTROS/PADRÕES */}
             {/* ============================================ */}
-            <Route
-              path="/categorias-ativos"
-              element={page(CategoriasAtivo)}
-            />
+            <Route path="/categorias-ativos" element={page(CategoriasAtivo)} />
             <Route
               path="/categorias-passivos"
               element={page(CategoriasPassivo)}
