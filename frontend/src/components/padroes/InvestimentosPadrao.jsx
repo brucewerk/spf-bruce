@@ -310,7 +310,7 @@ const InvestimentosPadrao = () => {
   const tiposAtivos = tiposInvestimento?.filter((t) => t.ativo) || [];
 
   return (
-    <div className="max-w-4xl mx-auto p-2 sm:p-4 pb-24">
+    <div className="max-w-4xl mx-auto p-2 sm:p-4">
       <div className="flex justify-between items-center mb-3 sm:mb-6">
         <h1 className="text-lg sm:text-2xl font-bold">
           📈 Investimentos Padrão

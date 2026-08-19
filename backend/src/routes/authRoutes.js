@@ -6,6 +6,7 @@ const validate = require("../middleware/validate");
 const {
   register,
   login,
+  logout,
   getProfile,
   updateProfile,
   deleteAccount,
@@ -34,5 +35,6 @@ router.post(
 router.get("/profile", auth, getProfile);
 router.put("/profile", auth, updateProfile);
 router.delete("/profile", auth, deleteAccount);
+router.post("/logout", auth, logout);
 
 module.exports = router;

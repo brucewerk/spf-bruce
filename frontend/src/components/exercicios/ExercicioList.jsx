@@ -19,7 +19,9 @@ import { formatarMoeda } from "../../utils/format";
 
 const ExercicioList = () => {
   const navigate = useNavigate();
-  const { data: exercicios, loading, refetch } = useFetch("/exercicios");
+  const { data: exercicios, loading, refetch } = useFetch(
+    "/exercicios?resumo=true",
+  );
   const [showModal, setShowModal] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -43,11 +45,7 @@ const ExercicioList = () => {
       : null;
 
   const totalPassivosAcumulado =
-    exercicios?.reduce((acc, e) => {
-      const totalPassivosMes =
-        e.passivos?.reduce((sum, p) => sum + (p.valor || 0), 0) || 0;
-      return acc + totalPassivosMes;
-    }, 0) || 0;
+    exercicios?.reduce((acc, e) => acc + (e.totalPassivos || 0), 0) || 0;
 
   let lucroPrejuizoAcumulado = 0;
   let patrimonioAnterior = 0;
@@ -105,7 +103,7 @@ const ExercicioList = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-2 sm:p-4 pb-24">
+    <div className="max-w-4xl mx-auto p-2 sm:p-4">
       <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-6">
         <h1 className="text-lg sm:text-2xl font-bold">📅 Exercícios</h1>
         <button
@@ -222,7 +220,8 @@ const ExercicioList = () => {
                           )}
                         </span>
                         <span className="text-[8px] sm:text-xs text-gray-400">
-                          {exercicio.ativos?.length || 0} ativos
+                          {exercicio.qtdAtivos ?? exercicio.ativos?.length ?? 0}{" "}
+                          ativos
                         </span>
                       </div>
 

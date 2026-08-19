@@ -26,6 +26,13 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  // Incrementado no logout (ou troca de senha) para invalidar, no servidor,
+  // qualquer JWT emitido antes disso — sem isso, um token continuava válido
+  // por até 7 dias mesmo depois do usuário clicar em "Sair".
+  tokenVersion: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Hash password antes de salvar
@@ -36,6 +43,10 @@ UserSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     this.updatedAt = Date.now();
+    // Trocar a senha também deve derrubar sessões antigas.
+    if (!this.isNew) {
+      this.tokenVersion = (this.tokenVersion || 0) + 1;
+    }
     next();
   } catch (error) {
     next(error);

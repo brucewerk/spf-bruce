@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import {
   Settings,
   X,
@@ -14,18 +13,12 @@ import {
   FileText,
   Bell,
   BarChart3,
-  User,
 } from "lucide-react";
 
 const SettingsMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth(); // Adicionado para pegar o nome do usuário
 
   const menuItems = [
-    {
-      section: "Conta",
-      items: [{ to: "/perfil", icon: User, label: "Meu Perfil" }],
-    },
     {
       section: "Categorias",
       items: [
@@ -91,16 +84,6 @@ const SettingsMenu = () => {
           />
 
           <div className="fixed bottom-28 right-4 bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-3 z-50 min-w-[240px] max-h-[60vh] overflow-y-auto border border-gray-200 dark:border-gray-700 animate-in slide-in-from-bottom-5 duration-200">
-            {/* Cabeçalho com nome do usuário */}
-            <div className="px-3 py-2 mb-2 border-b border-gray-200 dark:border-gray-700">
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Logado como
-              </p>
-              <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate">
-                {user?.name || "Usuário"}
-              </p>
-            </div>
-
             {menuItems.map((section, idx) => (
               <div key={idx}>
                 {idx > 0 && (

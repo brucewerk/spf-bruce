@@ -67,7 +67,7 @@ const AnalisesAvancadas = () => {
 
   if (!dados) {
     return (
-      <div className="max-w-4xl mx-auto p-4 pb-24">
+      <div className="max-w-4xl mx-auto p-4">
         <div className="card text-center py-12">
           <p className="text-gray-500 dark:text-gray-500">
             Nenhum dado disponível para análise
@@ -92,7 +92,7 @@ const AnalisesAvancadas = () => {
   }));
 
   return (
-    <div className="max-w-6xl mx-auto p-2 sm:p-4 pb-24">
+    <div className="max-w-6xl mx-auto p-2 sm:p-4">
       <div className="flex flex-wrap justify-between items-center gap-2 mb-3 sm:mb-6">
         <h1 className="text-lg sm:text-2xl font-bold">📊 Análises Avançadas</h1>
         <button

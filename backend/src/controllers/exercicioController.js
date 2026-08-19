@@ -3,6 +3,7 @@ const AtivoPadrao = require("../models/AtivoPadrao");
 const PassivoPadrao = require("../models/PassivoPadrao");
 const InvestimentoPadrao = require("../models/InvestimentoPadrao");
 const Conta = require("../models/Conta");
+const mongoose = require("mongoose");
 
 // Atualizar saldo das contas baseado nos exercícios
 const atualizarSaldosContas = async (userId) => {
@@ -129,11 +130,38 @@ const criarExercicio = async (req, res) => {
 // Listar exercícios por ano
 const listarExercicios = async (req, res) => {
   try {
-    const { year } = req.query;
+    const { year, resumo } = req.query;
     const userId = req.userId;
 
     const filter = { userId };
     if (year) filter.year = parseInt(year);
+
+    // Telas como a lista de exercícios só precisam de totais e contagem de
+    // itens, não dos arrays completos de ativos/passivos/investimentos de
+    // cada mês. Com `resumo=true`, evitamos trafegar esses arrays inteiros
+    // pela rede — isso cresce a cada mês que o usuário usa o app.
+    if (resumo === "true") {
+      const matchStage = { userId: new mongoose.Types.ObjectId(userId) };
+      if (year) matchStage.year = parseInt(year);
+
+      const exercicios = await Exercicio.aggregate([
+        { $match: matchStage },
+        { $sort: { year: -1, month: -1 } },
+        {
+          $project: {
+            year: 1,
+            month: 1,
+            totalAtivos: 1,
+            totalPassivos: 1,
+            variacaoMensal: 1,
+            qtdAtivos: { $size: { $ifNull: ["$ativos", []] } },
+            qtdPassivos: { $size: { $ifNull: ["$passivos", []] } },
+            qtdInvestimentos: { $size: { $ifNull: ["$investimentos", []] } },
+          },
+        },
+      ]);
+      return res.json(exercicios);
+    }
 
     const exercicios = await Exercicio.find(filter).sort({
       year: -1,

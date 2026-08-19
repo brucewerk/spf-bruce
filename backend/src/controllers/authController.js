@@ -14,8 +14,10 @@ const ProdutoInvestimento = require("../models/ProdutoInvestimento");
 const jwt = require("jsonwebtoken");
 
 // Gerar JWT
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+const generateToken = (userId, tokenVersion = 0) => {
+  return jwt.sign({ userId, tokenVersion }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
 // Registrar
@@ -38,7 +40,7 @@ const register = async (req, res) => {
 
     await user.save();
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.tokenVersion);
     res.status(201).json({
       message: "Usuário criado com sucesso!",
       token,
@@ -70,7 +72,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: "Email ou senha inválidos." });
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.tokenVersion);
     res.json({
       message: "Login realizado com sucesso!",
       token,
@@ -180,9 +182,25 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+// Logout — invalida no servidor o token atual (e qualquer outro emitido
+// antes dele), incrementando tokenVersion. Sem isso, "sair" só apagava o
+// token do navegador, mas ele continuava válido por até 7 dias se alguém
+// tivesse copiado.
+const logout = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.userId, {
+      $inc: { tokenVersion: 1 },
+    });
+    res.json({ message: "Logout realizado com sucesso." });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao fazer logout: " + error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
+  logout,
   getProfile,
   updateProfile,
   deleteAccount,

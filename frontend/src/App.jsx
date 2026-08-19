@@ -9,9 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/common/PrivateRoute";
-import BottomNav from "./components/common/BottomNav";
-import ThemeToggle from "./components/common/ThemeToggle";
-import SettingsMenu from "./components/common/SettingsMenu";
+import Layout from "./components/common/Layout";
 
 // Auth Pages
 import Login from "./components/auth/Login";
@@ -42,202 +40,87 @@ import ExportarRelatorios from "./components/exportar/ExportarRelatorios";
 import Notificacoes from "./components/notificacoes/Notificacoes";
 import AnalisesAvancadas from "./components/analises/AnalisesAvancadas";
 
-// 🔥 LAYOUT SEGURO
-const PrivateLayout = ({ children }) => {
-  return (
-    <PrivateRoute>
-      <div className="fixed-bottom-nav-safe-area">
-        {children}
-        <BottomNav />
-        <SettingsMenu />
-        <ThemeToggle />
-      </div>
-    </PrivateRoute>
-  );
-};
+// Cada rota autenticada segue o mesmo padrão: PrivateRoute > Layout > Página.
+// Antes esse bloco de 6 linhas era copiado manualmente em cada uma das ~19
+// rotas (ver histórico do git); esse helper elimina a duplicação e garante
+// que toda página nova já nasça com o BottomNav/Layout corretos.
+const page = (Component) => (
+  <PrivateRoute>
+    <Layout>
+      <Component />
+    </Layout>
+  </PrivateRoute>
+);
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 relative overflow-x-hidden">
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: "#363636",
-                  color: "#fff",
-                },
-              }}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: "#363636",
+                color: "#fff",
+              },
+            }}
+          />
+
+          <Routes>
+            {/* Rotas públicas */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* ============================================ */}
+            {/* ROTAS DO FOOTER - DADOS E RESUMOS */}
+            {/* ============================================ */}
+            <Route path="/" element={page(Dashboard)} />
+            <Route path="/evolucao" element={page(EvolucaoPatrimonial)} />
+            <Route path="/contas" element={page(Contas)} />
+            <Route path="/ativos" element={page(Ativos)} />
+            <Route path="/passivos" element={page(Passivos)} />
+            <Route path="/investimentos" element={page(Investimentos)} />
+            <Route path="/exercicios" element={page(ExercicioList)} />
+            <Route path="/exercicios/:id" element={page(ExercicioForm)} />
+            <Route path="/perfil" element={page(Profile)} />
+
+            {/* ============================================ */}
+            {/* ROTAS DA ENGRENAGEM - CADASTROS/PADRÕES */}
+            {/* ============================================ */}
+            <Route
+              path="/categorias-ativos"
+              element={page(CategoriasAtivo)}
+            />
+            <Route
+              path="/categorias-passivos"
+              element={page(CategoriasPassivo)}
+            />
+            <Route
+              path="/tipos-investimento"
+              element={page(TiposInvestimento)}
+            />
+            <Route
+              path="/produtos-investimento"
+              element={page(ProdutosInvestimento)}
+            />
+            <Route path="/ativos-padrao" element={page(AtivosPadrao)} />
+            <Route path="/passivos-padrao" element={page(PassivosPadrao)} />
+            <Route
+              path="/investimentos-padrao"
+              element={page(InvestimentosPadrao)}
             />
 
-            <Routes>
-              {/* Rotas públicas */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+            {/* ============================================ */}
+            {/* ROTAS DE FERRAMENTAS */}
+            {/* ============================================ */}
+            <Route path="/exportar" element={page(ExportarRelatorios)} />
+            <Route path="/notificacoes" element={page(Notificacoes)} />
+            <Route path="/analises" element={page(AnalisesAvancadas)} />
 
-              {/* ============================================ */}
-              {/* ROTAS PROTEGIDAS (TODAS COM O MESMO LAYOUT SEGURO) */}
-              {/* ============================================ */}
-              <Route
-                path="/"
-                element={
-                  <PrivateLayout>
-                    <Dashboard />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/evolucao"
-                element={
-                  <PrivateLayout>
-                    <EvolucaoPatrimonial />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/contas"
-                element={
-                  <PrivateLayout>
-                    <Contas />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/ativos"
-                element={
-                  <PrivateLayout>
-                    <Ativos />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/passivos"
-                element={
-                  <PrivateLayout>
-                    <Passivos />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/investimentos"
-                element={
-                  <PrivateLayout>
-                    <Investimentos />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/exercicios"
-                element={
-                  <PrivateLayout>
-                    <ExercicioList />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/exercicios/:id"
-                element={
-                  <PrivateLayout>
-                    <ExercicioForm />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/perfil"
-                element={
-                  <PrivateLayout>
-                    <Profile />
-                  </PrivateLayout>
-                }
-              />
-
-              <Route
-                path="/categorias-ativos"
-                element={
-                  <PrivateLayout>
-                    <CategoriasAtivo />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/categorias-passivos"
-                element={
-                  <PrivateLayout>
-                    <CategoriasPassivo />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/tipos-investimento"
-                element={
-                  <PrivateLayout>
-                    <TiposInvestimento />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/produtos-investimento"
-                element={
-                  <PrivateLayout>
-                    <ProdutosInvestimento />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/ativos-padrao"
-                element={
-                  <PrivateLayout>
-                    <AtivosPadrao />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/passivos-padrao"
-                element={
-                  <PrivateLayout>
-                    <PassivosPadrao />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/investimentos-padrao"
-                element={
-                  <PrivateLayout>
-                    <InvestimentosPadrao />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/exportar"
-                element={
-                  <PrivateLayout>
-                    <ExportarRelatorios />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/notificacoes"
-                element={
-                  <PrivateLayout>
-                    <Notificacoes />
-                  </PrivateLayout>
-                }
-              />
-              <Route
-                path="/analises"
-                element={
-                  <PrivateLayout>
-                    <AnalisesAvancadas />
-                  </PrivateLayout>
-                }
-              />
-
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </div>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
         </Router>
       </AuthProvider>
     </ThemeProvider>

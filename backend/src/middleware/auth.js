@@ -16,6 +16,13 @@ const auth = async (req, res, next) => {
       throw new Error();
     }
 
+    // Se o usuário deu logout (ou trocou a senha) depois que este token foi
+    // emitido, tokenVersion já foi incrementado no banco e o token antigo
+    // deixa de ser aceito, mesmo ainda não tendo expirado.
+    if ((decoded.tokenVersion || 0) !== (user.tokenVersion || 0)) {
+      throw new Error();
+    }
+
     req.user = user;
     req.userId = user._id;
     next();
