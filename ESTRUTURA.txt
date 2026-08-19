@@ -1,93 +1,119 @@
 spf-bruce/
-├── backend/
+├── backend/                     # API Node.js + Express
+│   ├── api/
+│   │   └── index.js             # Entry point para Vercel Serverless
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── database.js
+│   │   │   ├── cors.js
+│   │   │   ├── database.js
+│   │   │   └── monitoring.js
 │   │   ├── controllers/
-│   │   │   ├── authController.js
-│   │   │   ├── exercicioController.js
-│   │   │   ├── padraoController.js
-│   │   │   ├── contaController.js
-│   │   │   ├── investimentoController.js
-│   │   │   ├── categoriaController.js
-│   │   │   ├── tipoInvestimentoController.js
-│   │   │   ├── produtoInvestimentoController.js
 │   │   │   ├── ativoController.js
+│   │   │   ├── authController.js
+│   │   │   ├── categoriaController.js
+│   │   │   ├── contaController.js
+│   │   │   ├── exercicioController.js
+│   │   │   ├── investimentoController.js
+│   │   │   ├── investimentoPadraoController.js
+│   │   │   ├── padraoController.js
 │   │   │   ├── passivoController.js
-│   │   │   └── reportController.js
+│   │   │   ├── produtoInvestimentoController.js
+│   │   │   ├── reportController.js
+│   │   │   └── tipoInvestimentoController.js
+│   │   ├── middleware/
+│   │   │   ├── auth.js
+│   │   │   ├── rateLimit.js
+│   │   │   └── validate.js
 │   │   ├── models/
-│   │   │   ├── User.js
-│   │   │   ├── Exercicio.js
+│   │   │   ├── Ativo.js
 │   │   │   ├── AtivoPadrao.js
-│   │   │   ├── PassivoPadrao.js
-│   │   │   ├── InvestimentoPadrao.js
-│   │   │   ├── Conta.js
-│   │   │   ├── Investimento.js
 │   │   │   ├── CategoriaAtivo.js
 │   │   │   ├── CategoriaPassivo.js
+│   │   │   ├── Conta.js
+│   │   │   ├── Exercicio.js
+│   │   │   ├── Investimento.js
+│   │   │   ├── InvestimentoPadrao.js
+│   │   │   ├── Passivo.js
+│   │   │   ├── PassivoPadrao.js
+│   │   │   ├── ProdutoInvestimento.js
 │   │   │   ├── TipoInvestimento.js
-│   │   │   └── ProdutoInvestimento.js
+│   │   │   └── User.js
 │   │   ├── routes/
-│   │   │   ├── authRoutes.js
-│   │   │   ├── exercicioRoutes.js
-│   │   │   ├── padraoRoutes.js
-│   │   │   ├── contaRoutes.js
-│   │   │   ├── investimentoRoutes.js
-│   │   │   ├── categoriaRoutes.js
-│   │   │   ├── tipoInvestimentoRoutes.js
-│   │   │   ├── produtoInvestimentoRoutes.js
 │   │   │   ├── ativoRoutes.js
+│   │   │   ├── authRoutes.js
+│   │   │   ├── categoriaRoutes.js
+│   │   │   ├── contaRoutes.js
+│   │   │   ├── exercicioRoutes.js
+│   │   │   ├── investimentoRoutes.js
+│   │   │   ├── padraoRoutes.js
 │   │   │   ├── passivoRoutes.js
-│   │   │   └── reportRoutes.js
-│   │   ├── middleware/
-│   │   │   └── auth.js
+│   │   │   ├── produtoInvestimentoRoutes.js
+│   │   │   ├── reportRoutes.js
+│   │   │   └── tipoInvestimentoRoutes.js
+│   │   ├── app.js
 │   │   └── server.js
-│   ├── .env
+│   ├── tests/                    # Testes automatizados
+│   │   ├── auth.test.js
+│   │   ├── exercicio.test.js
+│   │   └── setupTestDB.js
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── .vercelignore
+│   ├── jest.config.js
+│   ├── package-lock.json
 │   ├── package.json
 │   └── vercel.json
-├── frontend/
+│
+├── frontend/                    # Aplicação React + Vite
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   └── favicon.png
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── common/
-│   │   │   │   ├── BottomNav.jsx
-│   │   │   │   ├── PrivateRoute.jsx
-│   │   │   │   ├── SettingsMenu.jsx
-│   │   │   │   └── ThemeToggle.jsx
+│   │   │   ├── analises/
+│   │   │   │   └── AnalisesAvancadas.jsx
+│   │   │   ├── ativos/
+│   │   │   │   └── Ativos.jsx
 │   │   │   ├── auth/
 │   │   │   │   ├── Login.jsx
-│   │   │   │   ├── Register.jsx
-│   │   │   │   └── Profile.jsx
-│   │   │   ├── dashboard/
-│   │   │   │   └── Dashboard.jsx
-│   │   │   ├── exercicios/
-│   │   │   │   ├── ExercicioList.jsx
-│   │   │   │   ├── ExercicioForm.jsx
-│   │   │   │   └── NovoExercicioModal.jsx
-│   │   │   ├── padroes/
-│   │   │   │   ├── AtivosPadrao.jsx
-│   │   │   │   ├── PassivosPadrao.jsx
-│   │   │   │   └── InvestimentosPadrao.jsx
+│   │   │   │   ├── Profile.jsx
+│   │   │   │   └── Register.jsx
 │   │   │   ├── categorias/
 │   │   │   │   ├── CategoriasAtivo.jsx
 │   │   │   │   ├── CategoriasPassivo.jsx
-│   │   │   │   ├── TiposInvestimento.jsx
-│   │   │   │   └── ProdutosInvestimento.jsx
+│   │   │   │   ├── ProdutosInvestimento.jsx
+│   │   │   │   └── TiposInvestimento.jsx
+│   │   │   ├── common/
+│   │   │   │   ├── BottomNav.jsx
+│   │   │   │   ├── ErrorBoundary.jsx
+│   │   │   │   ├── Layout.jsx
+│   │   │   │   ├── PrivateRoute.jsx
+│   │   │   │   ├── SettingsMenu.jsx
+│   │   │   │   └── ThemeToggle.jsx
 │   │   │   ├── contas/
 │   │   │   │   └── Contas.jsx
-│   │   │   ├── ativos/
-│   │   │   │   └── Ativos.jsx
-│   │   │   ├── passivos/
-│   │   │   │   └── Passivos.jsx
-│   │   │   ├── investimentos/
-│   │   │   │   └── Investimentos.jsx
+│   │   │   ├── dashboard/
+│   │   │   │   └── Dashboard.jsx
 │   │   │   ├── evolucao/
 │   │   │   │   └── EvolucaoPatrimonial.jsx
+│   │   │   ├── exercicios/
+│   │   │   │   ├── ExercicioForm.jsx
+│   │   │   │   ├── ExercicioList.jsx
+│   │   │   │   └── NovoExercicioModal.jsx
 │   │   │   ├── exportar/
 │   │   │   │   └── ExportarRelatorios.jsx
+│   │   │   ├── investimentos/
+│   │   │   │   └── Investimentos.jsx
 │   │   │   ├── notificacoes/
 │   │   │   │   └── Notificacoes.jsx
-│   │   │   └── analises/
-│   │   │       └── AnalisesAvancadas.jsx
+│   │   │   ├── padroes/
+│   │   │   │   ├── AtivosPadrao.jsx
+│   │   │   │   ├── InvestimentosPadrao.jsx
+│   │   │   │   └── PassivosPadrao.jsx
+│   │   │   └── passivos/
+│   │   │       └── Passivos.jsx
+│   │   ├── config/
+│   │   │   └── monitoring.js
 │   │   ├── context/
 │   │   │   ├── AuthContext.jsx
 │   │   │   └── ThemeContext.jsx
@@ -97,14 +123,18 @@ spf-bruce/
 │   │   │   └── api.js
 │   │   ├── utils/
 │   │   │   └── format.js
-│   │   ├── styles/
-│   │   │   └── index.css
 │   │   ├── App.jsx
+│   │   ├── index.css
 │   │   └── main.jsx
-│   ├── .env
+│   ├── .gitignore
+│   ├── .vercelignore
+│   ├── index.html
+│   ├── package-lock.json
 │   ├── package.json
-│   ├── tailwind.config.js
 │   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── vercel.json
 │   └── vite.config.js
-├── .gitignore
-└── README.md
+│
+├── .gitignore                    # Gitignore Global
+└── vercel.json                    # Configuração de deploy da Vercel (Root)
