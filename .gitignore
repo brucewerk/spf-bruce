@@ -1,14 +1,16 @@
 # Dependências
 node_modules/
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
-# Ambiente (Ignora apenas locais, mantém production para deploy)
+# Ambiente — nenhum .env vai pro Git. Segredos de produção (MONGODB_URI,
+# JWT_SECRET, SENTRY_DSN, etc.) ficam nas variáveis de ambiente do
+# Vercel/Render, nunca em um arquivo dentro do repositório.
 .env
 .env.local
 .env.development
-!.env.production
+.env.production
+.env.production.local
 
 # Builds
 dist/
@@ -46,3 +48,5 @@ temp/
 # Testes
 coverage/
 .nyc_output/
+cypress/videos/
+cypress/screenshots/

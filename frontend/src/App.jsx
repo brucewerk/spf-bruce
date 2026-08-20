@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,34 +11,65 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/common/PrivateRoute";
 import Layout from "./components/common/Layout";
 
-// Auth Pages
+// Login/Register ficam como import normal (não lazy): são a primeira tela
+// que a maioria das visitas vê, então não faz sentido adiar o carregamento
+// delas atrás de um Suspense — isso só adicionaria um flash de loading no
+// primeiro acesso.
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Profile from "./components/auth/Profile";
 
-// Main Pages (Footer - Dados/Resumos)
-import Dashboard from "./components/dashboard/Dashboard";
-import EvolucaoPatrimonial from "./components/evolucao/EvolucaoPatrimonial";
-import Contas from "./components/contas/Contas";
-import Ativos from "./components/ativos/Ativos";
-import Passivos from "./components/passivos/Passivos";
-import Investimentos from "./components/investimentos/Investimentos";
-import ExercicioList from "./components/exercicios/ExercicioList";
-import ExercicioForm from "./components/exercicios/ExercicioForm";
+// Todo o resto é lazy-loaded: cada rota vira um chunk JS separado, baixado
+// só quando o usuário navega até ela. Antes, todas as ~19 telas (incluindo
+// as que usam Recharts, ~110KB gzip) eram carregadas de uma vez só no
+// primeiro acesso, mesmo que o usuário só fosse abrir o Dashboard.
+const Profile = lazy(() => import("./components/auth/Profile"));
 
-// Configurações (Engrenagem - Cadastros/Padrões)
-import AtivosPadrao from "./components/padroes/AtivosPadrao";
-import PassivosPadrao from "./components/padroes/PassivosPadrao";
-import InvestimentosPadrao from "./components/padroes/InvestimentosPadrao";
-import CategoriasAtivo from "./components/categorias/CategoriasAtivo";
-import CategoriasPassivo from "./components/categorias/CategoriasPassivo";
-import TiposInvestimento from "./components/categorias/TiposInvestimento";
-import ProdutosInvestimento from "./components/categorias/ProdutosInvestimento";
+const Dashboard = lazy(() => import("./components/dashboard/Dashboard"));
+const EvolucaoPatrimonial = lazy(
+  () => import("./components/evolucao/EvolucaoPatrimonial"),
+);
+const Contas = lazy(() => import("./components/contas/Contas"));
+const Ativos = lazy(() => import("./components/ativos/Ativos"));
+const Passivos = lazy(() => import("./components/passivos/Passivos"));
+const Investimentos = lazy(
+  () => import("./components/investimentos/Investimentos"),
+);
+const ExercicioList = lazy(
+  () => import("./components/exercicios/ExercicioList"),
+);
+const ExercicioForm = lazy(
+  () => import("./components/exercicios/ExercicioForm"),
+);
 
-// Ferramentas
-import ExportarRelatorios from "./components/exportar/ExportarRelatorios";
-import Notificacoes from "./components/notificacoes/Notificacoes";
-import AnalisesAvancadas from "./components/analises/AnalisesAvancadas";
+const AtivosPadrao = lazy(() => import("./components/padroes/AtivosPadrao"));
+const PassivosPadrao = lazy(
+  () => import("./components/padroes/PassivosPadrao"),
+);
+const InvestimentosPadrao = lazy(
+  () => import("./components/padroes/InvestimentosPadrao"),
+);
+const CategoriasAtivo = lazy(
+  () => import("./components/categorias/CategoriasAtivo"),
+);
+const CategoriasPassivo = lazy(
+  () => import("./components/categorias/CategoriasPassivo"),
+);
+const TiposInvestimento = lazy(
+  () => import("./components/categorias/TiposInvestimento"),
+);
+const ProdutosInvestimento = lazy(
+  () => import("./components/categorias/ProdutosInvestimento"),
+);
+
+const ExportarRelatorios = lazy(
+  () => import("./components/exportar/ExportarRelatorios"),
+);
+const Notificacoes = lazy(
+  () => import("./components/notificacoes/Notificacoes"),
+);
+const AnalisesAvancadas = lazy(
+  () => import("./components/analises/AnalisesAvancadas"),
+);
 
 // Cada rota autenticada segue o mesmo padrão: PrivateRoute > Layout > Página.
 // Antes esse bloco de 6 linhas era copiado manualmente em cada uma das ~19
@@ -50,6 +81,12 @@ const page = (Component) => (
       <Component />
     </Layout>
   </PrivateRoute>
+);
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
+  </div>
 );
 
 function App() {
@@ -71,56 +108,61 @@ function App() {
             }}
           />
 
-          <Routes>
-            {/* Rotas públicas */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Rotas públicas */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            {/* ============================================ */}
-            {/* ROTAS DO FOOTER - DADOS E RESUMOS */}
-            {/* ============================================ */}
-            <Route path="/" element={page(Dashboard)} />
-            <Route path="/evolucao" element={page(EvolucaoPatrimonial)} />
-            <Route path="/contas" element={page(Contas)} />
-            <Route path="/ativos" element={page(Ativos)} />
-            <Route path="/passivos" element={page(Passivos)} />
-            <Route path="/investimentos" element={page(Investimentos)} />
-            <Route path="/exercicios" element={page(ExercicioList)} />
-            <Route path="/exercicios/:id" element={page(ExercicioForm)} />
-            <Route path="/perfil" element={page(Profile)} />
+              {/* ============================================ */}
+              {/* ROTAS DO FOOTER - DADOS E RESUMOS */}
+              {/* ============================================ */}
+              <Route path="/" element={page(Dashboard)} />
+              <Route path="/evolucao" element={page(EvolucaoPatrimonial)} />
+              <Route path="/contas" element={page(Contas)} />
+              <Route path="/ativos" element={page(Ativos)} />
+              <Route path="/passivos" element={page(Passivos)} />
+              <Route path="/investimentos" element={page(Investimentos)} />
+              <Route path="/exercicios" element={page(ExercicioList)} />
+              <Route path="/exercicios/:id" element={page(ExercicioForm)} />
+              <Route path="/perfil" element={page(Profile)} />
 
-            {/* ============================================ */}
-            {/* ROTAS DA ENGRENAGEM - CADASTROS/PADRÕES */}
-            {/* ============================================ */}
-            <Route path="/categorias-ativos" element={page(CategoriasAtivo)} />
-            <Route
-              path="/categorias-passivos"
-              element={page(CategoriasPassivo)}
-            />
-            <Route
-              path="/tipos-investimento"
-              element={page(TiposInvestimento)}
-            />
-            <Route
-              path="/produtos-investimento"
-              element={page(ProdutosInvestimento)}
-            />
-            <Route path="/ativos-padrao" element={page(AtivosPadrao)} />
-            <Route path="/passivos-padrao" element={page(PassivosPadrao)} />
-            <Route
-              path="/investimentos-padrao"
-              element={page(InvestimentosPadrao)}
-            />
+              {/* ============================================ */}
+              {/* ROTAS DA ENGRENAGEM - CADASTROS/PADRÕES */}
+              {/* ============================================ */}
+              <Route
+                path="/categorias-ativos"
+                element={page(CategoriasAtivo)}
+              />
+              <Route
+                path="/categorias-passivos"
+                element={page(CategoriasPassivo)}
+              />
+              <Route
+                path="/tipos-investimento"
+                element={page(TiposInvestimento)}
+              />
+              <Route
+                path="/produtos-investimento"
+                element={page(ProdutosInvestimento)}
+              />
+              <Route path="/ativos-padrao" element={page(AtivosPadrao)} />
+              <Route path="/passivos-padrao" element={page(PassivosPadrao)} />
+              <Route
+                path="/investimentos-padrao"
+                element={page(InvestimentosPadrao)}
+              />
 
-            {/* ============================================ */}
-            {/* ROTAS DE FERRAMENTAS */}
-            {/* ============================================ */}
-            <Route path="/exportar" element={page(ExportarRelatorios)} />
-            <Route path="/notificacoes" element={page(Notificacoes)} />
-            <Route path="/analises" element={page(AnalisesAvancadas)} />
+              {/* ============================================ */}
+              {/* ROTAS DE FERRAMENTAS */}
+              {/* ============================================ */}
+              <Route path="/exportar" element={page(ExportarRelatorios)} />
+              <Route path="/notificacoes" element={page(Notificacoes)} />
+              <Route path="/analises" element={page(AnalisesAvancadas)} />
 
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </Suspense>
         </Router>
       </AuthProvider>
     </ThemeProvider>
