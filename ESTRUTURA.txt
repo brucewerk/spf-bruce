@@ -138,3 +138,8 @@ spf-bruce/
 │
 ├── .gitignore                    # Gitignore Global
 └── vercel.json                    # Configuração de deploy da Vercel (Root)
+
+
+
+
+
