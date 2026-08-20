@@ -48,5 +48,5 @@ temp/
 # Testes
 coverage/
 .nyc_output/
-cypress/videos/
-cypress/screenshots/
+**/cypress/videos/
+**/cypress/screenshots/

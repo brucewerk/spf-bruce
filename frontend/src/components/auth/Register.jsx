@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
+import ThemeToggle from "../common/ThemeToggle";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -37,9 +39,15 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
+      <ThemeToggle />
       <div className="w-full max-w-md">
         <div className="card">
           <div className="text-center mb-8">
+            <img
+              src="/favicon-192x192.png"
+              alt="SPF"
+              className="w-16 h-16 mx-auto mb-3 rounded-2xl shadow-sm"
+            />
             <h1 className="text-3xl font-bold text-primary-600 dark:text-primary-400">
               SPF
             </h1>

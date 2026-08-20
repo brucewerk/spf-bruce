@@ -40,3 +40,27 @@ jobs:
           install: false
           start: npm --prefix frontend run preview -- --port 5173
           wait-on: "http://localhost:5173"
+
+  component-tests:
+    name: Cypress — Component Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      # cypress.config.js do component testing vive dentro de frontend/
+      # (precisa resolver o vite.config.js e o Tailwind deste projeto),
+      # diferente do e2e acima, cujo config está na raiz. Por isso aqui
+      # working-directory aponta pra frontend/ e install fica a cargo da
+      # própria action (ela cuida do cache do binário do Cypress).
+      - name: Cypress run (component)
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend
+          component: true

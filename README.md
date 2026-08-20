@@ -239,6 +239,17 @@ Acesse http://localhost:5173 no seu navegador.
 - npm run build -> Gera a build de produção na pasta dist
 - npm run preview -> Pré-visualiza a build localmente
 - npm run vercel-build -> Comando de build para a Vercel
+- npm run cy:component -> Roda os testes de componente do Cypress (headless)
+- npm run cy:component:open -> Abre o Cypress em modo interativo para testes de componente
+
+==========================================
+
+🧪 Testes
+
+- Backend: `cd backend && npm test` — testes de integração com Jest + Supertest, contra um MongoDB em memória (baixa o binário do Mongo na primeira execução).
+- E2E (fluxos de tela completos): `cypress.config.js` e `cypress/e2e/` ficam na raiz do repositório. Cobrem login, registro e redirecionamento de rotas protegidas contra o frontend rodando de verdade.
+- Componentes (peças isoladas de UI): `frontend/cypress.config.js` e `frontend/cypress/`. Testam um componente React por vez, sem precisar da aplicação inteira rodando — ex.: `ThemeToggle.cy.jsx`, `ErrorBoundary.cy.jsx`, colocados ao lado do componente que testam.
+- Os três rodam automaticamente em todo push/PR via GitHub Actions (`.github/workflows/ci.yml` e `.github/workflows/cypress.yml`).
 
 ==========================================
 
