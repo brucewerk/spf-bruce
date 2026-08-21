@@ -7,10 +7,10 @@ export default defineConfig({
     specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents(on, config) {
-      // Sem necessidade de preprocessor para E2E
+      // Sem necessidade de preprocessor
     },
   },
-  // 🔥 Component Testing (a pasta tests/support é o caminho correto)
+  // 🔥 Component Testing - Configuração final
   component: {
     devServer: {
       framework: "react",

@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../services/api";
 import toast from "react-hot-toast";
 
-const AuthContext = createContext();
+// 🔥 ADICIONADO: export const AuthContext (para permitir testes e mocks)
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -67,9 +68,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Invalida o token no servidor (tokenVersion++). Se a chamada falhar
-      // (ex.: sem internet, ou o token já expirou), ainda assim limpamos o
-      // estado local — o usuário não pode ficar preso na tela de logout.
       await api.post("/auth/logout");
     } catch (error) {
       console.error("Erro ao invalidar sessão no servidor:", error);
@@ -96,8 +94,6 @@ export const AuthProvider = ({ children }) => {
   const deleteAccount = async (password) => {
     try {
       await api.delete("/auth/profile", { data: { password } });
-      // Conta já foi apagada no servidor — não faz sentido chamar
-      // /auth/logout aqui (o usuário nem existe mais); só limpar localmente.
       localStorage.removeItem("spf_token");
       setToken(null);
       setUser(null);
