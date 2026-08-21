@@ -27,16 +27,11 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
-          # 🔥 Força o GitHub a não parar o build se o cache falhar
           fail-on-cache-miss: false
 
       - name: Instalar dependências
         run: npm ci
 
-      # O teste de contrato (authSchema.contract.test.js) importa a cópia do
-      # schema que vive em frontend/src/schemas/ pra garantir que as duas
-      # nunca fiquem dessincronizadas — por isso esse job também precisa do
-      # frontend instalado, mesmo só testando o backend.
       - name: Instalar dependências do frontend (para o teste de contrato)
         working-directory: frontend
         run: npm ci
@@ -66,7 +61,6 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-          # 🔥 Força o GitHub a não parar o build se o cache falhar
           fail-on-cache-miss: false
 
       - name: Instalar dependências

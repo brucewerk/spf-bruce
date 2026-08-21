@@ -8,6 +8,7 @@ on:
 
 jobs:
   cypress-run:
+    name: Cypress — E2E
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,6 +19,7 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
+          fail-on-cache-miss: false
 
       - name: Instalar dependências do frontend
         working-directory: frontend
@@ -27,19 +29,18 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # cypress.config.js e cypress/ ficam na raiz do repositório, então a
-      # action roda a partir daqui — só o servidor de preview é que precisa
-      # ser iniciado de dentro de frontend/.
-      #
-      # Os testes de smoke (cypress/e2e/auth.cy.js) só cobrem telas públicas
-      # (login/registro/redirecionamento) — não dependem do backend nem de
-      # um MongoDB rodando, então `vite preview` sozinho é suficiente aqui.
-      - name: Cypress run
+      - name: Cypress run (E2E)
         uses: cypress-io/github-action@v6
         with:
-          install: false
-          start: npm --prefix frontend run preview -- --port 5173
+          install: true
+          working-directory: frontend
+          start: npm run preview -- --port 5173
           wait-on: "http://localhost:5173"
+          wait-on-timeout: 120
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   component-tests:
     name: Cypress — Component Testing
@@ -53,14 +54,18 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
+          fail-on-cache-miss: false
 
-      # cypress.config.js do component testing vive dentro de frontend/
-      # (precisa resolver o vite.config.js e o Tailwind deste projeto),
-      # diferente do e2e acima, cujo config está na raiz. Por isso aqui
-      # working-directory aponta pra frontend/ e install fica a cargo da
-      # própria action (ela cuida do cache do binário do Cypress).
+      - name: Instalar dependências do frontend
+        working-directory: frontend
+        run: npm ci
+
       - name: Cypress run (component)
         uses: cypress-io/github-action@v6
         with:
+          install: true
           working-directory: frontend
           component: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
