@@ -4,8 +4,8 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "../../src/context/ThemeContext";
 import { AuthProvider } from "../../src/context/AuthContext";
 
-// Comando customizado para montar componentes que precisam de Contextos e Router
-Cypress.Commands.add("mountWithProviders", (component, options = {}) => {
+// Comando customizado para montar componentes com Providers e Router
+export const mountWithProviders = (component, options = {}) => {
   const { theme = true, auth = false, router = false } = options;
 
   let Wrapper = ({ children }) => <>{children}</>;
@@ -36,7 +36,7 @@ Cypress.Commands.add("mountWithProviders", (component, options = {}) => {
   }
 
   return mount(<Wrapper>{component}</Wrapper>);
-});
+};
 
-// Comando padrão do Cypress
+// Comando padrão do Cypress (mantido para compatibilidade)
 Cypress.Commands.add("mount", mount);
