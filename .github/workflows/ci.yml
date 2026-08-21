@@ -33,6 +33,14 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
+      # O teste de contrato (authSchema.contract.test.js) importa a cópia do
+      # schema que vive em frontend/src/schemas/ pra garantir que as duas
+      # nunca fiquem dessincronizadas — por isso esse job também precisa do
+      # frontend instalado, mesmo só testando o backend.
+      - name: Instalar dependências do frontend (para o teste de contrato)
+        working-directory: frontend
+        run: npm ci
+
       - name: Rodar testes
         run: npm test
         env:

@@ -1,0 +1,10 @@
+{
+  "name": "spf-bruce-shared",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Schemas Zod compartilhados entre backend e frontend (validação de formulários/API).",
+  "type": "module",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

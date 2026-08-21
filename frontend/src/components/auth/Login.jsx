@@ -1,24 +1,30 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 import ThemeToggle from "../common/ThemeToggle";
+import { loginSchema } from "../../schemas/authSchema";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  // Mesmo schema Zod usado pelo backend em POST /api/auth/login — a
+  // mensagem "Informe um e-mail válido" que aparece aqui é a mesma regra
+  // que o servidor aplica, não uma cópia que pode ficar desalinhada dela.
+  const {
+    register: registerField,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-    const result = await login(email, password);
-    setLoading(false);
-
+  const onSubmit = async (data) => {
+    const result = await login(data.email, data.password);
     if (result.success) {
       navigate("/");
     }
@@ -26,7 +32,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
-      <ThemeToggle />
+      <ThemeToggle position="top-right" />
       <div className="w-full max-w-md">
         <div className="card">
           <div className="text-center mb-8">
@@ -46,17 +52,20 @@ const Login = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <div>
               <label className="label">Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="input-field"
                 placeholder="seu@email.com"
-                required
+                {...registerField("email")}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -64,11 +73,9 @@ const Login = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="input-field pr-12"
                   placeholder="••••••••"
-                  required
+                  {...registerField("password")}
                 />
                 <button
                   type="button"
@@ -82,14 +89,19 @@ const Login = () => {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="btn-primary w-full"
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {isSubmitting ? "Entrando..." : "Entrar"}
             </button>
           </form>
 

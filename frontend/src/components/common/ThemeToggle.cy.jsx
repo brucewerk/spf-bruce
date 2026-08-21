@@ -31,4 +31,29 @@ describe("<ThemeToggle />", () => {
     cy.get("html").should("not.have.class", "dark");
     cy.wrap(localStorage).invoke("getItem", "theme").should("eq", "light");
   });
+
+  it("aplica a posição padrão (bottom-right) quando nenhuma prop é passada", () => {
+    cy.mount(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>,
+    );
+
+    cy.get('button[aria-label="Toggle theme"]')
+      .should("have.class", "bottom-36")
+      .and("have.class", "right-4");
+  });
+
+  it('usa o canto superior direito quando position="top-right" (Login/Register)', () => {
+    cy.mount(
+      <ThemeProvider>
+        <ThemeToggle position="top-right" />
+      </ThemeProvider>,
+    );
+
+    cy.get('button[aria-label="Toggle theme"]')
+      .should("have.class", "top-4")
+      .and("have.class", "right-4")
+      .and("not.have.class", "bottom-36");
+  });
 });

@@ -1,37 +1,41 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useAuth } from "../../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
-import toast from "react-hot-toast";
 import ThemeToggle from "../common/ThemeToggle";
+import { registerSchema } from "../../schemas/authSchema";
+
+// Estende o schema compartilhado com o backend (name/email/password) com
+// "confirmPassword" — um campo que só existe aqui no formulário, o backend
+// nunca recebe nem precisa validar. `registerSchema` continua sendo a
+// única fonte de verdade para as regras que o servidor também aplica.
+const registerFormSchema = registerSchema
+  .extend({
+    confirmPassword: z.string().min(1, "Confirme sua senha."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem.",
+    path: ["confirmPassword"],
+  });
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register: registerField,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(registerFormSchema),
+  });
 
-    if (password !== confirmPassword) {
-      toast.error("As senhas não coincidem");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres");
-      return;
-    }
-
-    setLoading(true);
-    const result = await register(name, email, password);
-    setLoading(false);
-
+  const onSubmit = async (data) => {
+    const result = await registerUser(data.name, data.email, data.password);
     if (result.success) {
       navigate("/");
     }
@@ -39,7 +43,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
-      <ThemeToggle />
+      <ThemeToggle position="top-right" />
       <div className="w-full max-w-md">
         <div className="card">
           <div className="text-center mb-8">
@@ -56,29 +60,35 @@ const Register = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <div>
               <label className="label">Nome completo</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
                 className="input-field"
                 placeholder="Seu nome"
-                required
+                {...registerField("name")}
               />
+              {errors.name && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div>
               <label className="label">Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="input-field"
                 placeholder="seu@email.com"
-                required
+                {...registerField("email")}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -86,11 +96,9 @@ const Register = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="input-field pr-12"
                   placeholder="••••••••"
-                  required
+                  {...registerField("password")}
                 />
                 <button
                   type="button"
@@ -104,26 +112,34 @@ const Register = () => {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <div>
               <label className="label">Confirmar senha</label>
               <input
                 type={showPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="input-field"
                 placeholder="••••••••"
-                required
+                {...registerField("confirmPassword")}
               />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="btn-primary w-full"
             >
-              {loading ? "Criando conta..." : "Criar conta"}
+              {isSubmitting ? "Criando conta..." : "Criar conta"}
             </button>
           </form>
 
