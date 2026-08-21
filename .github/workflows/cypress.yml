@@ -29,15 +29,17 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      # 🔥 CORREÇÃO: Agora o Cypress é executado na RAÍZ do projeto,
+      # para que ele possa encontrar o arquivo cypress.config.js que está lá.
       - name: Cypress run (E2E)
         uses: cypress-io/github-action@v6
         with:
-          install: true
-          working-directory: frontend
-          start: npm run preview -- --port 5173
+          install: false
+          start: npm --prefix frontend run preview -- --port 5173
           wait-on: "http://localhost:5173"
           wait-on-timeout: 120
           record: true
+          config-file: cypress.config.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,12 +62,15 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      # 🔥 CORREÇÃO: O Component Testing usa o arquivo de configuração
+      # que está DENTRO da pasta frontend/.
       - name: Cypress run (component)
         uses: cypress-io/github-action@v6
         with:
-          install: true
+          install: false
           working-directory: frontend
           component: true
+          config-file: cypress.config.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
