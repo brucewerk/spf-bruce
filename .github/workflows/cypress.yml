@@ -19,7 +19,6 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-          fail-on-cache-miss: false
 
       - name: Instalar dependências do frontend
         working-directory: frontend
@@ -29,12 +28,10 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # 🔥 CORREÇÃO: Agora o Cypress é executado na RAÍZ do projeto,
-      # para que ele possa encontrar o arquivo cypress.config.js que está lá.
       - name: Cypress run (E2E)
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          install: true
           start: npm --prefix frontend run preview -- --port 5173
           wait-on: "http://localhost:5173"
           wait-on-timeout: 120
@@ -56,18 +53,15 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-          fail-on-cache-miss: false
 
       - name: Instalar dependências do frontend
         working-directory: frontend
         run: npm ci
 
-      # 🔥 CORREÇÃO: O Component Testing usa o arquivo de configuração
-      # que está DENTRO da pasta frontend/.
       - name: Cypress run (component)
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          install: true
           working-directory: frontend
           component: true
           config-file: cypress.config.js

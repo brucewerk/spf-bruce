@@ -27,7 +27,6 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
-          fail-on-cache-miss: false
 
       - name: Instalar dependências
         run: npm ci
@@ -61,7 +60,6 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-          fail-on-cache-miss: false
 
       - name: Instalar dependências
         run: npm ci
