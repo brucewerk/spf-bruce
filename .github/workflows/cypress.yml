@@ -32,7 +32,8 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: true
-          start: npm --prefix frontend run preview -- --port 5173
+          working-directory: frontend
+          start: npm run preview -- --port 5173
           wait-on: "http://localhost:5173"
           wait-on-timeout: 120
           record: true

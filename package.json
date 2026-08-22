@@ -1,0 +1,16 @@
+{
+  "name": "spf-bruce",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SPF - Sistema Planilha Financeira — testes Cypress (E2E + Component Testing) rodam a partir daqui.",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:component": "cypress run --component",
+    "cy:component:open": "cypress open --component"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0",
+    "vite": "^4.5.0"
+  }
+}
